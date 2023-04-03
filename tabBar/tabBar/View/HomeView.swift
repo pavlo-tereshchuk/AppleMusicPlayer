@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Home: View {
+struct HomeView: View {
     @State private var expandScheet = false
     @Namespace private var animation
     var body: some View {
@@ -24,7 +24,7 @@ struct Home: View {
         }
         .overlay {
             if expandScheet {
-                ExpandedView(expandScheet: $expandScheet, animation: animation)
+                ExpandedSongView(expandScheet: $expandScheet, animation: animation)
                     .transition(.asymmetric(insertion: .identity, removal: .offset(y: -5)))
             }
         }
@@ -59,13 +59,17 @@ struct Home: View {
     
     @ViewBuilder
     func TabItem(_ title: String, _ icon: String) -> some View {
-        Text(title)
-            .tabItem {
+        ScrollView(.vertical, showsIndicators: false){
+            Text(title)
+                .padding(.top, 200)
+        }
+        .tabItem {
                 Image(systemName: icon)
                 Text(title)
             }
             .toolbarBackground(.visible, for: .tabBar)
             .toolbarBackground(.ultraThickMaterial, for: .tabBar)
+            .toolbar(expandScheet ? .hidden : .visible, for: .tabBar)
     }
 }
 
