@@ -51,11 +51,15 @@ struct ExpandedSongView: View {
                     }
                     .matchedGeometryEffect(id: "ICON1", in: animation)
                     .frame(height: size.width - 50)
+                    
+                    PlayerView(size)
+                        .offset(y: animateContent ? 0 : size.height)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
                 .padding(.bottom, safeArea.bottom == 0 ? 10 : safeArea.bottom)
                 .padding(.horizontal, 25)
+                .clipped()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         expandScheet = false
@@ -68,6 +72,56 @@ struct ExpandedSongView: View {
         .onAppear {
             withAnimation(.easeInOut(duration: 0.35)) {
                 animateContent = true
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func PlayerView(_ size: CGSize) -> some View{
+        GeometryReader {
+            let size = $0.size
+            let spacing = size.height * 0.04
+            
+            VStack(spacing: spacing) {
+                VStack(spacing: spacing) {
+                    HStack(alignment: .center, spacing: 15) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Accordion")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                            Text("MF DOOM")
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background {
+                                Circle()
+                                    .fill(.ultraThinMaterial)
+                                    .environment(\.colorScheme, .light)
+                            }
+                        
+                    }
+                    
+                    VStack(spacing: 4) {
+                        Capsule()
+                            .fill(.gray)
+                            .frame(height: 7)
+                        HStack {
+                            Text("0.00")
+                            
+                            Spacer()
+                            
+                            Text("-1.59")
+                        }
+                        .font(.caption2)
+                        .foregroundColor(.gray)
+                        
+                    }
+                    
+                }
             }
         }
     }
