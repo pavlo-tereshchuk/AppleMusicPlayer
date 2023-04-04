@@ -94,32 +94,105 @@ struct ExpandedSongView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Image(systemName: "ellipsis")
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background {
-                                Circle()
-                                    .fill(.ultraThinMaterial)
-                                    .environment(\.colorScheme, .light)
-                            }
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.white)
+                                .padding(12)
+                                .background {
+                                    Circle()
+                                        .fill(.ultraThinMaterial)
+                                        .environment(\.colorScheme, .light)
+                                }
+                        }
+                        
                         
                     }
                     
-                    VStack(spacing: 4) {
+                    VStack(spacing: spacing) {
                         Capsule()
                             .fill(.gray)
                             .frame(height: 7)
                         HStack {
-                            Text("0.00")
+                            Text("0:00")
                             
                             Spacer()
                             
-                            Text("-1.59")
+                            Text("-1:59")
                         }
                         .font(.caption2)
                         .foregroundColor(.gray)
                         
                     }
+                    
+                    HStack(spacing: size.width * 0.2) {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "backward.fill")
+                                .font(size.height > 300 ? .title3 : .title2)
+                        }
+                        
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "pause.fill")
+                                .font(size.height > 300 ? .largeTitle : .system(size: 50))
+                        }
+                        
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "forward.fill")
+                                .font(size.height > 300 ? .title3 : .title2)
+                        }
+                    }
+                    .foregroundColor(.white)
+                    
+                    HStack(spacing: 15) {
+                        
+                        Image(systemName: "speaker.fill")
+                            .foregroundColor(.white)
+                        
+                        Capsule()
+                            .fill(.gray)
+                            .frame(height: 7)
+                        
+                        Image(systemName: "speaker.wave.3.fill")
+                            .foregroundColor(.white)
+                    }
+                    .padding(.top, spacing * 2)
+                    
+                    HStack(alignment: .top, spacing: size.width * 0.2) {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "quote.bubble")
+                        }
+                        
+                        VStack(spacing: 6) {
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "airpods")
+                            }
+                            
+                            Text("pablo 2")
+                                .font(.caption)
+                        }
+                        
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "list.bullet")
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .font(.title2)
+                    .blendMode(.overlay)
+                    .padding(.top, spacing)
+
                     
                 }
             }
