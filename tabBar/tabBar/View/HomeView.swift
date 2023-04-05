@@ -66,10 +66,10 @@ struct HomeView: View {
         .tabItem {
                 Image(systemName: icon)
                 Text(title)
-            }
-            .toolbarBackground(.visible, for: .tabBar)
-            .toolbarBackground(.ultraThickMaterial, for: .tabBar)
-            .toolbar(expandScheet ? .hidden : .visible, for: .tabBar)
+        }
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarBackground(.ultraThickMaterial, for: .tabBar)
+        .toolbar(expandScheet ? .hidden : .visible, for: .tabBar)
     }
 }
 
