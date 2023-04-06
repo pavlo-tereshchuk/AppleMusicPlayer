@@ -152,21 +152,21 @@ struct ExpandedSongView: View {
                         
                     } label: {
                         Image(systemName: "backward.fill")
-                            .font(size.height > 300 ? .title3 : .title2)
+                            .font(size.height < 300 ? .title3 : .title2)
                     }
                     
                     Button {
                         
                     } label: {
                         Image(systemName: "pause.fill")
-                            .font(size.height > 300 ? .largeTitle : .system(size: 50))
+                            .font(size.height < 300 ? .largeTitle : .system(size: 50))
                     }
                     
                     Button {
                         
                     } label: {
                         Image(systemName: "forward.fill")
-                            .font(size.height > 300 ? .title3 : .title2)
+                            .font(size.height < 300 ? .title3 : .title2)
                     }
                 }
                 .foregroundColor(.white)
