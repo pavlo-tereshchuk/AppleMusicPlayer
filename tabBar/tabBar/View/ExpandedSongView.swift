@@ -12,7 +12,46 @@ struct ExpandedSongView: View {
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
     @State private var minimizedImage: Bool = false
-    @State private var quoteButton: Bool = false
+//    States for bottom buttons
+    @State private var quoteButton: Bool = false {
+        didSet {
+            if quoteButton && listButton {
+                listButton = false
+            }
+            
+            if !quoteButton && !listButton {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    minimizedImage = false
+                }
+            }
+            
+            if quoteButton && !listButton {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    minimizedImage = true
+                }
+            }
+        }
+    }
+    @State private var listButton: Bool = false {
+        didSet {
+            if quoteButton && listButton {
+                quoteButton = false
+            }
+            
+            if !quoteButton && !listButton {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    minimizedImage = false
+                }
+            }
+            
+            if !quoteButton && listButton {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    minimizedImage = true
+                }
+            }
+        }
+    }
+
     @State private var offsetY: CGFloat = 0
     
     var body: some View {
@@ -170,27 +209,11 @@ struct ExpandedSongView: View {
                     
                     HStack(alignment: .top, spacing: size.width * 0.2) {
                         Button {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                minimizedImage.toggle()
-                            }
-                            
                             withAnimation(.easeInOut(duration: 0.05)) {
                                 quoteButton.toggle()
                             }
                         } label: {
-                            
-                                Image(systemName: quoteButton ? "quote.bubble.fill" : "quote.bubble")
-                                    .foregroundColor(quoteButton ? Color(UIColor.darkGray) : Color(UIColor.lightGray))
-                                    .padding(.vertical, 4)
-                                    .padding(.horizontal, 2)
-                                    .background {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color(UIColor.lightGray))
-                                                .scaleEffect(quoteButton ? 1 : 0.6)
-                                                .opacity(quoteButton ? 1 : 0)
-                                        }
-                                    }
+                            customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
                         }
                        
                         
@@ -207,11 +230,11 @@ struct ExpandedSongView: View {
                         }
                         
                         Button {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                minimizedImage.toggle()
+                            withAnimation(.easeInOut(duration: 0.05)) {
+                                listButton.toggle()
                             }
                         } label: {
-                            Image(systemName: "list.bullet")
+                            customButtonLabel(imageName: "list.bullet", toggleButton: listButton)
                         }
                     }
                     .foregroundColor(.white)
@@ -254,6 +277,22 @@ struct ExpandedSongView: View {
             
             
         }
+    }
+    
+    @ViewBuilder
+    func customButtonLabel(imageName: String, toggleButton: Bool) -> some View {
+        Image(systemName: imageName)
+            .foregroundColor(toggleButton ? Color(UIColor.darkGray) : Color(UIColor.lightGray))
+            .padding(.vertical, 4)
+            .padding(.horizontal, 2)
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(UIColor.lightGray))
+                        .scaleEffect(toggleButton ? 1 : 0.6)
+                        .opacity(toggleButton ? 1 : 0)
+                }
+            }
     }
     
     @ViewBuilder
