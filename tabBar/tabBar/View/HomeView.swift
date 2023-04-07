@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var expandScheet = true
+    @State private var expandScheet = false
     @Namespace private var animation
     var body: some View {
         TabView {

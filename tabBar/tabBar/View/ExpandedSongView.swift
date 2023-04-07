@@ -11,6 +11,8 @@ struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
+    @State private var minimizedImage: Bool = false
+    @State private var quoteButton: Bool = false
     @State private var offsetY: CGFloat = 0
     
     var body: some View {
@@ -34,29 +36,27 @@ struct ExpandedSongView: View {
                     .matchedGeometryEffect(id: "bigView", in: animation)
                     
 
-                
-                VStack(spacing: 15) {
-                    
-                Capsule()
-                    .fill(.gray)
-                    .frame(width: 40, height: 5)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : size.height)
-                
-                    GeometryReader {
-                        let size = $0.size
-                        Image("Icon1")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: size.width, height: size.height)
-                            .clipShape(RoundedRectangle(cornerRadius: animateContent ? 15 : 5, style: .continuous))
-                    }
-                    .matchedGeometryEffect(id: "ICON1", in: animation)
-                    .frame(height: size.width - 50)
-                    .padding(.vertical, size.height > 700 ? 30 : 10)
-                    
-                    PlayerView(size)
+               
+                VStack {
+                    Capsule()
+                        .fill(.gray)
+                        .frame(width: 40, height: 5)
+                        .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : size.height)
+                    
+                    VStack(spacing: 15) {
+                        GeometryReader {
+                            let size = $0.size
+                            
+                            SongImageAndHeaderShareView(size)
+                        }
+                        .matchedGeometryEffect(id: "ICON1", in: animation)
+                        .frame(height: size.width - 50)
+                        .padding(.vertical, size.height > 700 ? 30 : 10)
+                        
+                        PlayerView(size)
+                            .offset(y: animateContent ? 0 : size.height)
+                    }
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
                 .padding(.bottom, safeArea.bottom == 0 ? 10 : safeArea.bottom)
@@ -101,46 +101,26 @@ struct ExpandedSongView: View {
             VStack(spacing: spacing) {
                 
                 VStack(spacing: spacing) {
-                    HStack(alignment: .center, spacing: 15) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Accordion")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                            Text("MF DOOM")
-                                .foregroundColor(.gray)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        Button {
-                            
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background {
-                                    Circle()
-                                        .fill(.ultraThinMaterial)
-                                        .environment(\.colorScheme, .light)
-                                }
-                        }
-                        
-                        
-                    }
                     
-                    VStack(spacing: spacing) {
-                        Capsule()
-                            .fill(.gray)
-                            .frame(height: 7)
-                        HStack {
-                            Text("0:00")
-                            
-                            Spacer()
-                            
-                            Text("-1:59")
-                        }
-                        .font(.caption2)
-                        .foregroundColor(.gray)
+                    if (!minimizedImage) {
+                        SongHeaderAndShareView()
+                            .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
+                        VStack(spacing: spacing) {
+                            Capsule()
+                                .fill(.gray)
+                                .frame(height: 7)
+                            HStack {
+                                Text("0:00")
+                                
+                                Spacer()
+                                
+                                Text("-1:59")
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                            
+                        }
                     }
    
                 }
@@ -190,16 +170,36 @@ struct ExpandedSongView: View {
                     
                     HStack(alignment: .top, spacing: size.width * 0.2) {
                         Button {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                minimizedImage.toggle()
+                            }
                             
+                            withAnimation(.easeInOut(duration: 0.05)) {
+                                quoteButton.toggle()
+                            }
                         } label: {
-                            Image(systemName: "quote.bubble")
+                            
+                                Image(systemName: quoteButton ? "quote.bubble.fill" : "quote.bubble")
+                                    .foregroundColor(quoteButton ? Color(UIColor.darkGray) : Color(UIColor.lightGray))
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 2)
+                                    .background {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color(UIColor.lightGray))
+                                                .scaleEffect(quoteButton ? 1 : 0.6)
+                                                .opacity(quoteButton ? 1 : 0)
+                                        }
+                                    }
                         }
+                       
                         
                         VStack(spacing: 6) {
                             Button {
                                 
                             } label: {
                                 Image(systemName: "airpods")
+                                    .foregroundColor(Color(UIColor.lightGray))
                             }
                             
                             Text("pablo 2")
@@ -207,17 +207,70 @@ struct ExpandedSongView: View {
                         }
                         
                         Button {
-                            
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                minimizedImage.toggle()
+                            }
                         } label: {
                             Image(systemName: "list.bullet")
                         }
                     }
                     .foregroundColor(.white)
                     .font(.title2)
-                    .blendMode(.overlay)
+//                    .blendMode(.overlay)
                     .padding(.top, spacing)
                 }
                 .frame(height: size.height/2.5, alignment: .bottom)
+            }
+        }
+        
+        
+    }
+    
+    @ViewBuilder
+    func SongHeaderAndShareView() -> some View {
+        HStack(alignment: .center, spacing: 15) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Accordion")
+                    .font(minimizedImage ? .headline : .title3 )
+                    .fontWeight(.semibold)
+                Text("MF DOOM")
+                    .font(minimizedImage ? .footnote : .body)
+                    .foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Button {
+                
+            } label: {
+                Image(systemName: "ellipsis")
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .environment(\.colorScheme, .light)
+                    }
+            }
+            
+            
+        }
+    }
+    
+    @ViewBuilder
+    func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
+        var imageFrame: CGSize {
+            minimizedImage ? CGSize(width: 65, height: 65) : size
+        }
+        HStack(spacing: size.width * 0.04) {
+            Image("Icon1")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: imageFrame.width, height: imageFrame.height)
+                .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
+            
+            if minimizedImage {
+                SongHeaderAndShareView()
+                    .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
             }
         }
     }
