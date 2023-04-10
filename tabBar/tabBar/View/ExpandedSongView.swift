@@ -222,19 +222,20 @@ struct ExpandedSongView: View {
                                 
                             } label: {
                                 Image(systemName: "airpods")
-                                    .foregroundColor(Color(UIColor.lightGray))
                             }
                             
                             Text("pablo 2")
                                 .font(.caption)
                         }
+                        .foregroundColor(Color(UIColor.lightGray))
+
                         
                         Button {
                             withAnimation(.easeInOut(duration: 0.05)) {
                                 listButton.toggle()
                             }
                         } label: {
-                            customButtonLabel(imageName: "list.bullet", toggleButton: listButton)
+                            customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
                         }
                     }
                     .foregroundColor(.white)
@@ -280,9 +281,10 @@ struct ExpandedSongView: View {
     }
     
     @ViewBuilder
-    func customButtonLabel(imageName: String, toggleButton: Bool) -> some View {
+    func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0) -> some View {
         Image(systemName: imageName)
             .foregroundColor(toggleButton ? Color(UIColor.darkGray) : Color(UIColor.lightGray))
+            .padding(paddingEdges, paddingLength)
             .padding(.vertical, 4)
             .padding(.horizontal, 2)
             .background {
