@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
     var animation: Namespace.ID
@@ -53,6 +54,21 @@ struct ExpandedSongView: View {
     }
 
     @State private var offsetY: CGFloat = 0
+    
+//    Drop down menu buttons
+    private let dropDownMenuItems = [
+        "Add to Library" : "plus",
+        "Add to a Playlist..." : "text.badge.plus",
+        "Play Next" : "text.insert",
+        "Play Last" : "text.append",
+        "Share Song..." : "square.and.arrow.up",
+        "View Full Lyrics" : "text.quote",
+        "Share Lyrics" : "",
+        "Show Album" : "music.note.list",
+        "Create Station" : "badge.plus.radiowaves.right",
+        "Love" : "heart",
+        "Suggest Less Like This" : "hand.thumbsdown"
+    ]
     
     var body: some View {
         GeometryReader {
@@ -263,8 +279,17 @@ struct ExpandedSongView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            Button {
-                
+            Menu {
+                ForEach(dropDownMenuItems.indices.sorted(), id: \.self) { index in
+                    Button {
+
+                    } label: {
+                        HStack {
+                            Text(dropDownMenuItems[index].key)
+                            Image(systemName: dropDownMenuItems[index].value)
+                        }
+                    }
+                }
             } label: {
                 Image(systemName: "ellipsis")
                     .foregroundColor(.white)
@@ -275,8 +300,6 @@ struct ExpandedSongView: View {
                             .environment(\.colorScheme, .light)
                     }
             }
-            
-            
         }
     }
     
