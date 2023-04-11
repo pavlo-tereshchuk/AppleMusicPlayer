@@ -13,6 +13,7 @@
 		C56CEA7329D3366900205820 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C56CEA7229D3366900205820 /* Assets.xcassets */; };
 		C56CEA7629D3366900205820 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C56CEA7529D3366900205820 /* Preview Assets.xcassets */; };
 		C56CEA7E29D33FD900205820 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56CEA7D29D33FD900205820 /* HomeView.swift */; };
+		C5E1FD4B29E08B8100F0AF09 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		C56CEA7229D3366900205820 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C56CEA7529D3366900205820 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C56CEA7D29D33FD900205820 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				C56CEA6E29D3366200205820 /* tabBarApp.swift */,
 				C56CEA7029D3366200205820 /* ContentView.swift */,
 				C56CEA7C29D33FC700205820 /* View */,
+				C5E1FD4929E0879700F0AF09 /* Model */,
 				C56CEA7229D3366900205820 /* Assets.xcassets */,
 				C56CEA7429D3366900205820 /* Preview Content */,
 			);
@@ -79,6 +82,14 @@
 				C516A14029D6E484007CD723 /* ExpandedSongView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		C5E1FD4929E0879700F0AF09 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +164,7 @@
 			files = (
 				C56CEA7129D3366200205820 /* ContentView.swift in Sources */,
 				C516A14129D6E484007CD723 /* ExpandedSongView.swift in Sources */,
+				C5E1FD4B29E08B8100F0AF09 /* AudioPlayer.swift in Sources */,
 				C56CEA7E29D33FD900205820 /* HomeView.swift in Sources */,
 				C56CEA6F29D3366200205820 /* tabBarApp.swift in Sources */,
 			);
