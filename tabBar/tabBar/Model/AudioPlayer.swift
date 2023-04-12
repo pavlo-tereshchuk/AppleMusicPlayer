@@ -39,22 +39,23 @@ class AudioPlayer {
 class Song {
     let name: String
     let url: URL
-    let image: UIImage
+    var image = UIImage()
     
-    init(name: String, image: UIImage) {
+    init(name: String) {
         self.name = name
         let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
         self.url = URL(fileURLWithPath: filePath!)
-        extractSongData()
+        self.image = extractSongData()
     }
     
-    func extractSongData() {
+    func extractSongData() -> UIImage{
         let asset = AVURLAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)
         generator.appliesPreferredTrackTransform = true
         let timestamp = CMTime(seconds: 5, preferredTimescale: 1)
         let imageRef = try? generator.copyCGImage(at: timestamp, actualTime: nil)
-        self.image = imageRef == nil ? UIImage() : UIImage(cgImage: imageRef!)
+        let image = (imageRef == nil ? UIImage() : UIImage(cgImage: imageRef!))
+        return image
     }
 }
 
