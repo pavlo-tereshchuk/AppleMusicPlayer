@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject var vm = HomeViewModel()
     @State private var expandScheet = false
     @Namespace private var animation
+    
     var body: some View {
         TabView {
             TabItem("Listen Now", "play.circle.fill")
@@ -27,6 +29,9 @@ struct HomeView: View {
                 ExpandedSongView(expandScheet: $expandScheet, animation: animation)
                     .transition(.asymmetric(insertion: .identity, removal: .offset(y: -5)))
             }
+        }
+        .onAppear {
+            vm.getSongsList()
         }
     }
     

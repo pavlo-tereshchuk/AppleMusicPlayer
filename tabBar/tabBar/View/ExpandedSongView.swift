@@ -52,7 +52,6 @@ struct ExpandedSongView: View {
             }
         }
     }
-
     @State private var offsetY: CGFloat = 0
     
 //    Drop down menu buttons
@@ -78,11 +77,11 @@ struct ExpandedSongView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
                     .fill(.ultraThickMaterial)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
-                            .fill(Color(UIColor.darkGray))
-                            .opacity(animateContent ? 1:0)
-                    }
+//                    .overlay {
+//                        RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
+//                            .fill(Color(UIColor.darkGray))
+//                            .opacity(animateContent ? 1:0)
+//                    }
                     .overlay(alignment: .top) {
                         MusicInfo(expandScheet: $expandScheet, animation: animation)
                             .allowsHitTesting(false)

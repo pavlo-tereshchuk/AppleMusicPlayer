@@ -11,8 +11,6 @@ import SwiftUI
 
 class AudioPlayer {
     var audioPlayer: AVAudioPlayer?
-    
-    
     func playSong(_ songName: String) {
         let filePath = Bundle.main.path(forResource: songName, ofType: "mp3")
         
@@ -34,28 +32,51 @@ class AudioPlayer {
             print(error.localizedDescription)
         }
     }
+    
+    
 }
 
 class Song {
-    let name: String
-    let url: URL
+    let fileName: String
+    var title: String = ""
+    var url: URL
     var image = UIImage()
     
     init(name: String) {
-        self.name = name
+        self.fileName = name
         let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
         self.url = URL(fileURLWithPath: filePath!)
-        self.image = extractSongData()
+        self.extractSongData()
     }
     
-    func extractSongData() -> UIImage{
-        let asset = AVURLAsset(url: url)
-        let generator = AVAssetImageGenerator(asset: asset)
-        generator.appliesPreferredTrackTransform = true
-        let timestamp = CMTime(seconds: 5, preferredTimescale: 1)
-        let imageRef = try? generator.copyCGImage(at: timestamp, actualTime: nil)
-        let image = (imageRef == nil ? UIImage() : UIImage(cgImage: imageRef!))
-        return image
+    func extractSongData(){
+        let asset = AVAsset(url: url)
+        asset.loadValuesAsynchronously(forKeys: ["commonMetadata"]) {
+            var error: NSError?
+                        let status = asset.statusOfValue(forKey: "commonMetadata", error: &error)
+
+                        switch status {
+                            case .loaded:
+                                for i in asset.commonMetadata{
+                                    if i.commonKey?.rawValue == "artwork"{
+                                        let data = i.value as! Data
+                                        self.image  = UIImage(data: data) ?? UIImage()
+                                    }
+
+                                    if i.commonKey?.rawValue == "title"{
+                                        let data = i.value as! String
+                                        self.title = data
+                                    }
+                                }
+                            case .failed:
+                                print("Failed to load metadata: \(error?.localizedDescription ?? "Unknown error")")
+                            case .cancelled:
+                                print("Loading metadata was cancelled.")
+                            default:
+                                break
+                        }
+        }
+
     }
 }
 
