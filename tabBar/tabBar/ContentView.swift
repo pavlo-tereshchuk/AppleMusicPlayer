@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var vm = HomeViewModel()
+
     var body: some View {
-        HomeView()
+        HomeView(vm: vm)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        ContentView()
+        ContentView(vm: HomeViewModel())
     }
 }

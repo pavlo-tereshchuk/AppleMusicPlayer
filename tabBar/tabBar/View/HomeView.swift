@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject var vm = HomeViewModel()
+    @ObservedObject var vm: HomeViewModel
     @State private var expandScheet = false
     @Namespace private var animation
     
     var body: some View {
         TabView {
-            TabItem("Listen Now", "play.circle.fill")
+            TabItem(String(vm.isLoaded), "play.circle.fill")
             TabItem("Browse", "square.grid.2x2.fill")
             TabItem("Radio", "dot.radiowaves.left.and.right")
             TabItem("Music", "play.square.fill")
@@ -26,12 +26,9 @@ struct HomeView: View {
         }
         .overlay {
             if expandScheet {
-                ExpandedSongView(expandScheet: $expandScheet, animation: animation)
+                ExpandedSongView(expandScheet: $expandScheet, vm: vm, animation: animation)
                     .transition(.asymmetric(insertion: .identity, removal: .offset(y: -5)))
             }
-        }
-        .onAppear {
-            vm.getSongsList()
         }
     }
     
@@ -45,7 +42,7 @@ struct HomeView: View {
                 Rectangle()
                     .fill(.ultraThickMaterial)
                     .overlay {
-                        MusicInfo(expandScheet: $expandScheet, animation: animation)
+                        MusicInfo(expandScheet: $expandScheet, vm: vm, animation: animation)
                     }
                     .matchedGeometryEffect(id: "bigView", in: animation)
             }
@@ -80,28 +77,36 @@ struct HomeView: View {
 
 struct MusicInfo: View {
     @Binding var expandScheet: Bool
+    @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
+    
+    
     var body: some View {
+        let song = vm.songs[vm.currentSong]
+
         HStack(spacing: 0) {
             ZStack {
                 if !expandScheet {
                     GeometryReader {
                         let size = $0.size
-                        Image("Icon1")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: size.width, height: size.height)
-                            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                        
+                        Image(uiImage: song.image!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: size.width, height: size.height)
+                                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+   
                     }
                     .matchedGeometryEffect(id: "ICON1", in: animation)
                 }
             }
             .frame(width: 45, height: 45)
             
-            Text("Accordion")
-                .fontWeight(.semibold)
-                .lineLimit(1)
-                .padding(15)
+            if vm.isLoaded {
+                Text(song.title)
+                    .lineLimit(1)
+                    .padding(15)
+            }
                 
             
             Spacer(minLength: 20)

@@ -39,8 +39,15 @@ class AudioPlayer {
 class Song {
     let fileName: String
     var title: String = ""
+    var artist: String = ""
     var url: URL
-    var image = UIImage()
+    var image: UIImage? = UIImage(named: "placeholder")! {
+        didSet {
+            if image == nil {
+                image = UIImage(named: "placeholder")!
+            }
+        }
+    }
     
     init(name: String) {
         self.fileName = name
@@ -51,30 +58,23 @@ class Song {
     
     func extractSongData(){
         let asset = AVAsset(url: url)
-        asset.loadValuesAsynchronously(forKeys: ["commonMetadata"]) {
-            var error: NSError?
-                        let status = asset.statusOfValue(forKey: "commonMetadata", error: &error)
+        
+        for i in asset.commonMetadata{
+            if i.commonKey == .commonKeyArtwork{
+                let data = i.value as! Data
+                self.image  = UIImage(data: data)
+            }
 
-                        switch status {
-                            case .loaded:
-                                for i in asset.commonMetadata{
-                                    if i.commonKey?.rawValue == "artwork"{
-                                        let data = i.value as! Data
-                                        self.image  = UIImage(data: data) ?? UIImage()
-                                    }
-
-                                    if i.commonKey?.rawValue == "title"{
-                                        let data = i.value as! String
-                                        self.title = data
-                                    }
-                                }
-                            case .failed:
-                                print("Failed to load metadata: \(error?.localizedDescription ?? "Unknown error")")
-                            case .cancelled:
-                                print("Loading metadata was cancelled.")
-                            default:
-                                break
-                        }
+            if i.commonKey == .commonKeyTitle{
+                let data = i.value as! String
+                self.title = data
+            }
+            
+            if i.commonKey == .commonKeyArtist{
+                let data = i.value as! String
+                self.artist = data
+            }
+                 
         }
 
     }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
+    @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
     @State private var minimizedImage: Bool = false
@@ -77,13 +78,13 @@ struct ExpandedSongView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
                     .fill(.ultraThickMaterial)
-//                    .overlay {
-//                        RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
-//                            .fill(Color(UIColor.darkGray))
-//                            .opacity(animateContent ? 1:0)
-//                    }
+                    .overlay {
+                        RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
+                            .fill(Color("Background"))
+                            .opacity(animateContent ? 1:0)
+                    }
                     .overlay(alignment: .top) {
-                        MusicInfo(expandScheet: $expandScheet, animation: animation)
+                        MusicInfo(expandScheet: $expandScheet, vm: vm, animation: animation)
                             .allowsHitTesting(false)
                             .opacity(animateContent ? 0:1)
                     }
@@ -148,6 +149,7 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func PlayerView(_ size: CGSize) -> some View{
+        let song = vm.songs[vm.currentSong]
         GeometryReader {
             let size = $0.size
             let spacing = size.height * 0.04
@@ -157,7 +159,7 @@ struct ExpandedSongView: View {
                 VStack(spacing: spacing) {
                     
                     if (!minimizedImage) {
-                        SongHeaderAndShareView()
+                        SongHeaderAndShareView(song.title, artist: song.artist)
                             .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
                         VStack(spacing: spacing) {
@@ -266,13 +268,14 @@ struct ExpandedSongView: View {
     }
     
     @ViewBuilder
-    func SongHeaderAndShareView() -> some View {
+    func SongHeaderAndShareView(_ title: String, artist: String) -> some View {
         HStack(alignment: .center, spacing: 15) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Accordion")
+                Text(title)
                     .font(minimizedImage ? .headline : .title3 )
                     .fontWeight(.semibold)
-                Text("MF DOOM")
+                    .foregroundColor(.white)
+                Text(artist)
                     .font(minimizedImage ? .footnote : .body)
                     .foregroundColor(.gray)
             }
@@ -321,18 +324,20 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
+        let song = vm.songs[vm.currentSong]
+
         var imageFrame: CGSize {
             minimizedImage ? CGSize(width: 65, height: 65) : size
         }
         HStack(spacing: size.width * 0.04) {
-            Image("Icon1")
+            Image(uiImage: song.image!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
             
             if minimizedImage {
-                SongHeaderAndShareView()
+                SongHeaderAndShareView(song.title, artist: song.artist)
                     .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
             }
         }
