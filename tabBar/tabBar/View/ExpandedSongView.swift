@@ -54,6 +54,7 @@ struct ExpandedSongView: View {
         }
     }
     @State private var offsetY: CGFloat = 0
+    @State private var isPlaying: Bool = false
     
 //    Drop down menu buttons
     private let dropDownMenuItems = [
@@ -102,7 +103,6 @@ struct ExpandedSongView: View {
                     VStack(spacing: 15) {
                         GeometryReader {
                             let size = $0.size
-                            
                             SongImageAndHeaderShareView(size)
                         }
                         .matchedGeometryEffect(id: "ICON1", in: animation)
@@ -178,9 +178,11 @@ struct ExpandedSongView: View {
                     }
                     
                     Button {
-                        
+                        withAnimation(.interactiveSpring(response: 1.8, dampingFraction: 0.6)) {
+                            isPlaying.toggle()
+                        }
                     } label: {
-                        Image(systemName: "pause.fill")
+                        Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 300 ? .largeTitle : .system(size: 50))
                     }
                     
@@ -196,19 +198,9 @@ struct ExpandedSongView: View {
                 
 //                Volume and below
                 VStack(spacing: spacing) {
-                    HStack(spacing: 15) {
-                        
-                        Image(systemName: "speaker.fill")
-                            .foregroundColor(.white)
-                        
-                        Capsule()
-                            .fill(.gray)
-                            .frame(height: 7)
-                        
-                        Image(systemName: "speaker.wave.3.fill")
-                            .foregroundColor(.white)
-                    }
-                    .padding(.top, spacing * 2)
+                    
+                    AudioStatus(spacing)
+                        .padding(.top, spacing * 2)
                     
                     HStack(alignment: .top, spacing: size.width * 0.2) {
                         Button {
@@ -321,31 +313,13 @@ struct ExpandedSongView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
-            
+                .scaleEffect( isPlaying ? 1 : 0.8)
+
             if minimizedImage {
                 SongHeaderAndShareView(song.title, artist: song.artist)
                     .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
             }
         }
-    }
-}
-
-struct ExpandedView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .preferredColorScheme(.dark)
-    }
-}
-
-extension View {
-    var deviceCornerRadius: CGFloat {
-        let key = "_displayCornerRadius"
-        if let screen = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen {
-            if let cornerRadius = screen.value(forKey: key) as? CGFloat {
-                return cornerRadius
-            }
-        }
-     return 0
     }
 }
 
@@ -367,7 +341,7 @@ struct SongStatus: View {
         self.spacing = spacing
     }
     
-//    TODO: Finish Capsule progress with size and cut end of progress view
+//    TODO: Finish Capsule progress with size and cut end of progress view. GeometryReader?
     var body: some View {
         VStack(alignment: .center, spacing: spacing) {
             ZStack(alignment: .leading) {
@@ -407,5 +381,81 @@ struct SongStatus: View {
                 }
             }))
         
+    }
+}
+
+struct ExpandedView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .preferredColorScheme(.dark)
+    }
+}
+
+extension View {
+    var deviceCornerRadius: CGFloat {
+        let key = "_displayCornerRadius"
+        if let screen = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen {
+            if let cornerRadius = screen.value(forKey: key) as? CGFloat {
+                return cornerRadius
+            }
+        }
+     return 0
+    }
+}
+
+
+
+struct AudioStatus: View {
+    let spacing: CGFloat
+    @State private var isPressed: Bool = false {
+        didSet {
+            if isPressed && !oldValue {
+                volumeWidth += 20
+            }
+            if !isPressed && oldValue{
+                volumeWidth -= 20
+            }
+        }
+    }
+    @State private var volumeWidth: CGFloat = 0
+    
+    init(_ spacing: CGFloat) {
+        self.spacing = spacing
+    }
+    
+    var body: some View {
+        HStack(spacing: 15) {
+            
+            Image(systemName: "speaker.fill")
+                .foregroundColor(isPressed ? .white : .gray)
+            
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(.gray)
+                    .frame(height: isPressed ? 12 : 7)
+                Capsule()
+                    .fill(isPressed ? .white : Color(UIColor.lightGray))
+                    .frame(width: self.volumeWidth, height: isPressed ? 12 : 7)
+            }
+            
+            Image(systemName: "speaker.wave.3.fill")
+                .foregroundColor(isPressed ? .white : .gray)
+        }
+        .padding(.horizontal, isPressed ? 0 : 10)
+        .padding(.top, isPressed ? 0 : 2.5)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+            .onChanged({ value in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isPressed = true
+                }
+                let x = value.location.x
+                self.volumeWidth = x > UIScreen.main.bounds.width - 54 ? self.volumeWidth : x
+            })
+            .onEnded({ value in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isPressed = false
+                }
+            }))
     }
 }
