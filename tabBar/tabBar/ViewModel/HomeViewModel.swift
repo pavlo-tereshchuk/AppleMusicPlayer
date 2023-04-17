@@ -35,4 +35,8 @@ class HomeViewModel: ObservableObject {
         }
         return false
     }
+    
+    func pressPlayPause() {
+        
+    }
 }

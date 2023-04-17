@@ -11,17 +11,14 @@ import SwiftUI
 
 class AudioPlayer {
     var audioPlayer: AVAudioPlayer?
-    func playSong(_ songName: String) {
-        let filePath = Bundle.main.path(forResource: songName, ofType: "mp3")
-        
-        // Create a URL object from the file path
-        let fileURL = URL(fileURLWithPath: filePath!)
-        
+    
+    func start(_ song: Song) {
         do {
             // Initialize the audio player with the song file
-            audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
+            audioPlayer = try AVAudioPlayer(contentsOf: song.url)
             
             // Play the song
+            audioPlayer?.prepareToPlay()
             audioPlayer?.play()
             
             // Rewind the song to the beginning
@@ -33,50 +30,17 @@ class AudioPlayer {
         }
     }
     
-    
-}
-
-class Song {
-    let fileName: String
-    var title: String = ""
-    var artist: String = ""
-    var url: URL
-    var image: UIImage? = UIImage(named: "placeholder")! {
-        didSet {
-            if image == nil {
-                image = UIImage(named: "placeholder")!
+    func pause_play() {
+        if let audioPlayer = audioPlayer {
+            if audioPlayer.isPlaying {
+                audioPlayer.pause()
+            } else {
+                audioPlayer.play()
             }
         }
     }
     
-    init(name: String) {
-        self.fileName = name
-        let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
-        self.url = URL(fileURLWithPath: filePath!)
-        self.extractSongData()
-    }
-    
-    func extractSongData(){
-        let asset = AVAsset(url: url)
-        
-        for i in asset.commonMetadata{
-            if i.commonKey == .commonKeyArtwork{
-                let data = i.value as! Data
-                self.image  = UIImage(data: data)
-            }
-
-            if i.commonKey == .commonKeyTitle{
-                let data = i.value as! String
-                self.title = data
-            }
-            
-            if i.commonKey == .commonKeyArtist{
-                let data = i.value as! String
-                self.artist = data
-            }
-                 
-        }
-
+    func setCurrentTime(_ time: Double) {
+        audioPlayer?.currentTime = time
     }
 }
-

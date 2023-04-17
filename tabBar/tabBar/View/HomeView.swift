@@ -14,7 +14,7 @@ struct HomeView: View {
     
     var body: some View {
         TabView {
-            TabItem(String(vm.isLoaded), "play.circle.fill")
+            TabItem("Home", "play.circle.fill")
             TabItem("Browse", "square.grid.2x2.fill")
             TabItem("Radio", "dot.radiowaves.left.and.right")
             TabItem("Music", "play.square.fill")
