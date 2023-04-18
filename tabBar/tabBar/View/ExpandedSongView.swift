@@ -154,7 +154,7 @@ struct ExpandedSongView: View {
             let size = $0.size
             let spacing = size.height * 0.04
             
-            VStack(spacing: spacing) {
+            VStack(spacing: 0) {
                 
                 VStack(spacing: spacing) {
                     
@@ -168,41 +168,58 @@ struct ExpandedSongView: View {
                 }
                 .frame(height: size.height/2.5, alignment: .top)
                 
+                Spacer(minLength: 10)
+                
 //                Play controls
-                HStack(spacing: size.width * 0.2) {
-                    Button {
-                        
-                    } label: {
+                HStack(spacing: 0) {
+                    
+                    ControlButton {
+                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
+                            // Action to play prev song
+                        }
+                    } content: {
                         Image(systemName: "backward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
+                    .padding(.leading, size.width * 0.1)
                     
-                    Button {
-                        withAnimation(.interactiveSpring(response: 1.8, dampingFraction: 0.6)) {
+                    Spacer()
+                       
+                    ControlButton {
+                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
                             isPlaying.toggle()
                         }
-                    } label: {
+                    } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 300 ? .largeTitle : .system(size: 50))
                     }
+                    .frame(maxHeight: .infinity)
                     
-                    Button {
-                        
-                    } label: {
+                    Spacer()
+                    
+                    ControlButton {
+                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
+                            // Action to play prev song
+                        }
+                    } content: {
                         Image(systemName: "forward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
+                    .padding(.trailing, size.width * 0.1)
                 }
                 .foregroundColor(.white)
-                .frame(maxHeight: .infinity)
+//                .padding(.top, spacing)
+
+                Spacer()
                 
 //                Volume and below
                 VStack(spacing: spacing) {
                     
                     AudioStatus(spacing)
-                        .padding(.top, spacing * 2)
+//                        .padding(.top, spacing * 2)
+                        .padding(.bottom, spacing)
                     
-                    HStack(alignment: .top, spacing: size.width * 0.2) {
+                    HStack(alignment: .bottom, spacing: size.width * 0.2) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.05)) {
                                 quoteButton.toggle()
@@ -236,10 +253,11 @@ struct ExpandedSongView: View {
                     .foregroundColor(.white)
                     .font(.title2)
 //                    .blendMode(.overlay)
-                    .padding(.top, spacing)
                 }
                 .frame(height: size.height/2.5, alignment: .bottom)
+//                .padding(.bottom, spacing)
             }
+            .frame(maxHeight: .infinity)
         }
         
         
@@ -313,93 +331,13 @@ struct ExpandedSongView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
-                .scaleEffect( isPlaying ? 1 : 0.8)
+//                .scaleEffect( isPlaying ? 1 : 0.8)
 
             if minimizedImage {
                 SongHeaderAndShareView(song.title, artist: song.artist)
                     .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
             }
         }
-    }
-}
-
-struct SongStatus: View {
-    let spacing: CGFloat
-    @State private var isPressed: Bool = false {
-        didSet {
-            if isPressed && !oldValue {
-                progressWidth += 20
-            }
-            if !isPressed && oldValue{
-                progressWidth -= 20
-            }
-        }
-    }
-    @State private var progressWidth: CGFloat = 0
-    
-    init(_ spacing: CGFloat) {
-        self.spacing = spacing
-    }
-    
-//    TODO: Finish Capsule progress with size and cut end of progress view. GeometryReader?
-    var body: some View {
-        VStack(alignment: .center, spacing: spacing) {
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(.gray)
-                    .frame(height: isPressed ? 12 : 7)
-                Capsule()
-                    .fill(isPressed ? .white : Color(UIColor.lightGray))
-                    .frame(width: self.progressWidth, height: isPressed ? 12 : 7)
-            }
-
-            HStack {
-                Text("0:00")
-                
-                Spacer()
-                
-                Text("-1:59")
-            }
-            .font(.caption2)
-            .foregroundColor(isPressed ? .white : .gray)
-            
-        }
-        .padding(.horizontal, isPressed ? 0 : 10)
-        .padding(.top, isPressed ? 0 : 2.5)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-            .onChanged({ value in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    isPressed = true
-                }
-                let x = value.location.x
-                self.progressWidth = x > UIScreen.main.bounds.width - 54 ? self.progressWidth : x
-            })
-            .onEnded({ value in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    isPressed = false
-                }
-            }))
-        
-    }
-}
-
-struct ExpandedView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .preferredColorScheme(.dark)
-    }
-}
-
-extension View {
-    var deviceCornerRadius: CGFloat {
-        let key = "_displayCornerRadius"
-        if let screen = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen {
-            if let cornerRadius = screen.value(forKey: key) as? CGFloat {
-                return cornerRadius
-            }
-        }
-     return 0
     }
 }
 
@@ -459,3 +397,59 @@ struct AudioStatus: View {
             }))
     }
 }
+
+struct ExpandedView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .preferredColorScheme(.dark)
+    }
+}
+
+struct ControlButton< Content: View>: View {
+    let completion: () -> Void
+    @ViewBuilder let content: Content
+    
+    
+    @State private var showBackground = false
+    
+    init(_ completion: @escaping () -> Void, content: @escaping () -> Content) {
+        self.completion = completion
+        self.content = content()
+    }
+    
+    var body: some View {
+        Button {
+            completion()
+                showBackground = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    showBackground = false
+            }
+        } label: {
+            content
+                .background(
+                    Circle()
+                    .fill(.gray)
+                    .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: showBackground)
+                    .opacity(showBackground ? 0.5 : 0)
+                    .padding(showBackground ? -15 : -10)
+                )
+        }
+    }
+}
+
+extension View {
+    var deviceCornerRadius: CGFloat {
+        let key = "_displayCornerRadius"
+        if let screen = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen {
+            if let cornerRadius = screen.value(forKey: key) as? CGFloat {
+                return cornerRadius
+            }
+        }
+     return 0
+    }
+}
+
+
+
+
