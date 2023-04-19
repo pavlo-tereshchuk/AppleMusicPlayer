@@ -55,6 +55,11 @@ struct ExpandedSongView: View {
         }
     }
     @State private var offsetY: CGFloat = 0
+    @State private var currentTime: TimeInterval = 0
+
+    
+    let timer = Timer.publish(every: 0.5, on: .main, in: .common)
+        .autoconnect()
     
     
 //    Drop down menu buttons
@@ -147,6 +152,9 @@ struct ExpandedSongView: View {
                 isPlaying = vm.isPlaying()
             }
         }
+        .onReceive(timer) { _ in
+            self.currentTime = vm.getCurrentTime()
+        }
     }
     
     @ViewBuilder
@@ -164,13 +172,13 @@ struct ExpandedSongView: View {
                         SongHeaderAndShareView(song.title, artist: song.artist)
                             .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
-                        SongStatus(spacing: spacing, status: $vm.currentTime, duration: song.duration, progress: 0.1)
+                        SongStatus(spacing: spacing, status: $currentTime, duration: song.duration, progress: 0.1)
                     }
    
                 }
                 .frame(height: size.height/2.5, alignment: .top)
                 
-                Text("\(vm.getDuration())")
+                Text("\(currentTime)")
                 
                 Spacer(minLength: 10)
                 

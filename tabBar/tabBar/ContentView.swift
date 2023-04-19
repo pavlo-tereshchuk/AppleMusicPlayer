@@ -9,14 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var vm = HomeViewModel()
-    let timer = Timer.publish(every: 0.5, on: .main, in: .common)
-        .autoconnect()
 
     var body: some View {
         HomeView(vm: vm)
-            .onReceive(timer) { _ in
-//                vm.currentTime = vm.getCurrentTime()
-            }
     }
 }
 
