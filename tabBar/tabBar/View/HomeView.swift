@@ -10,7 +10,9 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var vm: HomeViewModel
     @State private var expandScheet = false
+    @State var isPlaying: Bool = false
     @Namespace private var animation
+    
     
     var body: some View {
         TabView {
@@ -26,7 +28,7 @@ struct HomeView: View {
         }
         .overlay {
             if expandScheet {
-                ExpandedSongView(expandScheet: $expandScheet, vm: vm, animation: animation)
+                ExpandedSongView(expandScheet: $expandScheet, isPlaying: $isPlaying, vm: vm, animation: animation)
                     .transition(.asymmetric(insertion: .identity, removal: .offset(y: -5)))
             }
         }
@@ -42,7 +44,7 @@ struct HomeView: View {
                 Rectangle()
                     .fill(.ultraThickMaterial)
                     .overlay {
-                        MusicInfo(expandScheet: $expandScheet, vm: vm, animation: animation)
+                        MusicInfo(expandScheet: $expandScheet, isPlaying: $isPlaying, vm: vm, animation: animation)
                     }
                     .matchedGeometryEffect(id: "bigView", in: animation)
             }
@@ -77,12 +79,13 @@ struct HomeView: View {
 
 struct MusicInfo: View {
     @Binding var expandScheet: Bool
+    @Binding var isPlaying: Bool
     @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     
     
     var body: some View {
-        let song = vm.songs[vm.currentSong]
+        let song = vm.getCurrentSong()
 
         HStack(spacing: 0) {
             ZStack {
@@ -112,9 +115,12 @@ struct MusicInfo: View {
             Spacer(minLength: 20)
             
             Button {
-                
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isPlaying.toggle()
+                }
+                vm.pause_play()
             } label: {
-                Image(systemName: "pause.fill")
+                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
             }
             .padding(.horizontal, 15)
             
@@ -128,6 +134,9 @@ struct MusicInfo: View {
         .padding(.horizontal, 15)
         .frame(height: 70)
         .contentShape(Rectangle())
+        .onAppear{
+            isPlaying = vm.isPlaying()
+        }
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.3), {expandScheet = true})
         }

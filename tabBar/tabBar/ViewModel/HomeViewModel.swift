@@ -6,16 +6,21 @@
 //
 
 import Foundation
+import AVFoundation
 
 class HomeViewModel: ObservableObject {
     @Published var songs: [Song] = [Song(name: "")]
     @Published var isLoaded = false
     @Published var currentSong = 0
+    @Published var currentTime: TimeInterval = 0
     
-    let audioPlayer = AudioPlayer()
+    
+    let audioPlayer = AudioPlayer.getInstance()
     
     init() {
-       getSongsList()
+        self.getSongsList()
+        self.prepareToPlay(getCurrentSong())
+        self.currentTime = getCurrentTime()
     }
 
     func getSongsList() -> Bool{
@@ -36,7 +41,32 @@ class HomeViewModel: ObservableObject {
         return false
     }
     
-    func pressPlayPause() {
-        
+    func getCurrentSong() -> Song {
+        return songs[currentSong]
     }
+    
+    func prepareToPlay(_ song: Song) {
+        audioPlayer.prepareToPlay(song)
+    }
+    
+    func pause_play() {
+        audioPlayer.pause_play()
+    }
+    
+    func setCurrentTime(_ time: Double) {
+        audioPlayer.setCurrentTime(time)
+    }
+    
+    func getCurrentTime() -> TimeInterval {
+       return audioPlayer.getCurrentTime()
+    }
+    
+    func isPlaying() -> Bool {
+        return audioPlayer.isPlaying() ?? false
+    }
+     
+    func getDuration() -> Double {
+        return audioPlayer.getDuration()
+    }
+    
 }

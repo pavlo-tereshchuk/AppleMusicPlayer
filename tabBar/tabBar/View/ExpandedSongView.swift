@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
+    @Binding var isPlaying: Bool
     @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
@@ -54,7 +55,7 @@ struct ExpandedSongView: View {
         }
     }
     @State private var offsetY: CGFloat = 0
-    @State private var isPlaying: Bool = false
+    
     
 //    Drop down menu buttons
     private let dropDownMenuItems = [
@@ -85,7 +86,7 @@ struct ExpandedSongView: View {
                             .opacity(animateContent ? 1:0)
                     }
                     .overlay(alignment: .top) {
-                        MusicInfo(expandScheet: $expandScheet, vm: vm, animation: animation)
+                        MusicInfo(expandScheet: $expandScheet, isPlaying: $isPlaying, vm: vm, animation: animation)
                             .allowsHitTesting(false)
                             .opacity(animateContent ? 0:1)
                     }
@@ -143,13 +144,14 @@ struct ExpandedSongView: View {
         .onAppear {
             withAnimation(.easeInOut(duration: 0.35)) {
                 animateContent = true
+                isPlaying = vm.isPlaying()
             }
         }
     }
     
     @ViewBuilder
     func PlayerView(_ size: CGSize) -> some View{
-        let song = vm.songs[vm.currentSong]
+        let song = vm.getCurrentSong()
         GeometryReader {
             let size = $0.size
             let spacing = size.height * 0.04
@@ -162,11 +164,13 @@ struct ExpandedSongView: View {
                         SongHeaderAndShareView(song.title, artist: song.artist)
                             .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
-                        SongStatus(spacing)
+                        SongStatus(spacing: spacing, status: $vm.currentTime, duration: song.duration, progress: 0.1)
                     }
    
                 }
                 .frame(height: size.height/2.5, alignment: .top)
+                
+                Text("\(vm.getDuration())")
                 
                 Spacer(minLength: 10)
                 
@@ -188,6 +192,7 @@ struct ExpandedSongView: View {
                     ControlButton {
                         withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
                             isPlaying.toggle()
+                            vm.pause_play()
                         }
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
@@ -215,7 +220,7 @@ struct ExpandedSongView: View {
 //                Volume and below
                 VStack(spacing: spacing) {
                     
-                    AudioStatus(spacing)
+                    VolumeStatus(spacing: spacing, progress: 0.1)
 //                        .padding(.top, spacing * 2)
                         .padding(.bottom, spacing)
                     
@@ -320,7 +325,7 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
-        let song = vm.songs[vm.currentSong]
+        let song = vm.getCurrentSong()
 
         var imageFrame: CGSize {
             minimizedImage ? CGSize(width: 65, height: 65) : size
@@ -341,62 +346,6 @@ struct ExpandedSongView: View {
     }
 }
 
-
-
-struct AudioStatus: View {
-    let spacing: CGFloat
-    @State private var isPressed: Bool = false {
-        didSet {
-            if isPressed && !oldValue {
-                volumeWidth += 20
-            }
-            if !isPressed && oldValue{
-                volumeWidth -= 20
-            }
-        }
-    }
-    @State private var volumeWidth: CGFloat = 0
-    
-    init(_ spacing: CGFloat) {
-        self.spacing = spacing
-    }
-    
-    var body: some View {
-        HStack(spacing: 15) {
-            
-            Image(systemName: "speaker.fill")
-                .foregroundColor(isPressed ? .white : .gray)
-            
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(.gray)
-                    .frame(height: isPressed ? 12 : 7)
-                Capsule()
-                    .fill(isPressed ? .white : Color(UIColor.lightGray))
-                    .frame(width: self.volumeWidth, height: isPressed ? 12 : 7)
-            }
-            
-            Image(systemName: "speaker.wave.3.fill")
-                .foregroundColor(isPressed ? .white : .gray)
-        }
-        .padding(.horizontal, isPressed ? 0 : 10)
-        .padding(.top, isPressed ? 0 : 2.5)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-            .onChanged({ value in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    isPressed = true
-                }
-                let x = value.location.x
-                self.volumeWidth = x > UIScreen.main.bounds.width - 54 ? self.volumeWidth : x
-            })
-            .onEnded({ value in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    isPressed = false
-                }
-            }))
-    }
-}
 
 struct ExpandedView_Previews: PreviewProvider {
     static var previews: some View {

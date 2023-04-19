@@ -14,6 +14,7 @@ class Song {
     let fileName: String
     var title: String = ""
     var artist: String = ""
+    var duration: Double = 0
     var url: URL
     var image: UIImage? = UIImage(named: "placeholder")! {
         didSet {
@@ -32,7 +33,7 @@ class Song {
     
     func extractSongData(){
         let asset = AVAsset(url: url)
-        
+
         for i in asset.commonMetadata{
             if i.commonKey == .commonKeyArtwork{
                 let data = i.value as! Data
@@ -47,6 +48,11 @@ class Song {
             if i.commonKey == .commonKeyArtist{
                 let data = i.value as! String
                 self.artist = data
+            }
+            
+            if i.commonKey == .id3MetadataKeyLength{
+//                let data = i.value as! Double
+                self.duration = Double(asset.duration.value)
             }
                  
         }

@@ -9,20 +9,16 @@ import SwiftUI
 
 struct SongStatus: View {
     let spacing: CGFloat
-    @State private var isPressed: Bool = false {
-        didSet {
-            if isPressed && !oldValue {
-                progressWidth += 10
-            }
-            if !isPressed && oldValue{
-                progressWidth -= 10
-            }
-        }
-    }
-    @State private var progressWidth: CGFloat = 0
+    @Binding var status: TimeInterval
+    let duration: TimeInterval
+    @State private var isPressed: Bool = false
+    @State var progress: Double
     
-    init(_ spacing: CGFloat) {
+    init(spacing: CGFloat, status: Binding<TimeInterval>, duration: TimeInterval, progress: Double) {
         self.spacing = spacing
+        self._status = status
+        self.duration = duration
+        self.progress = progress
     }
     
     var body: some View {
@@ -38,7 +34,8 @@ struct SongStatus: View {
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(isPressed ? .white : Color(UIColor.lightGray))
-                                .frame(width: self.progressWidth, height: isPressed ? 12 : 7)
+                                .frame(height: isPressed ? 12 : 7)
+                                .scaleEffect(x: progress, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
@@ -46,7 +43,7 @@ struct SongStatus: View {
                 
                 HStack {
                     Text("0:00")
-                    
+                                        
                     Spacer()
                     
                     Text("-1:59")
@@ -64,7 +61,7 @@ struct SongStatus: View {
                             isPressed = true
                         }
                         let x = value.location.x
-                        self.progressWidth = x > width ? self.progressWidth : x
+                        self.progress = x >= width ? self.progress : x/width
                     })
                     .onEnded({ value in
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -77,8 +74,9 @@ struct SongStatus: View {
 }
 
 struct SongStatus_Previews: PreviewProvider {
+    @State static var status = TimeInterval(0.1)
     static var previews: some View {
-        SongStatus(10)
+        SongStatus(spacing: 10, status: $status, duration: Song(name: "song").duration, progress: 0.1)
             .preferredColorScheme(.dark)
         
     }
