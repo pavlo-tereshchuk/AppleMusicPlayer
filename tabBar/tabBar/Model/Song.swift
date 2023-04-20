@@ -49,12 +49,7 @@ class Song {
                 let data = i.value as! String
                 self.artist = data
             }
-            
-            if i.commonKey == .id3MetadataKeyLength{
-//                let data = i.value as! Double
-                self.duration = Double(asset.duration.value)
-            }
-                 
+       
         }
 
     }

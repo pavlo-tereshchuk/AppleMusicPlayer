@@ -32,11 +32,22 @@ class AudioPlayer {
         // Rewind the song to the beginning
         audioPlayer?.currentTime = 0
         
+        // Song duration
+        song.duration = getDuration()
+        
     } catch {
         // If there was an error initializing the audio player, print the error
         print(error.localizedDescription)
     }
 }
+    
+    func play() {
+        audioPlayer?.play()
+    }
+    
+    func play(atTime: TimeInterval) {
+        audioPlayer?.play(atTime: atTime)
+    }
     
     func pause_play() {
         if let audioPlayer = audioPlayer {
@@ -48,11 +59,15 @@ class AudioPlayer {
     }
 }
     
+    func pause() {
+        audioPlayer?.pause()
+    }
+    
     func isPlaying() -> Bool? {
         return audioPlayer?.isPlaying
     }
     
-    func setCurrentTime(_ time: Double) {
+    func setCurrentTime(_ time: TimeInterval) {
         audioPlayer?.currentTime = time
     }
     
@@ -60,7 +75,7 @@ class AudioPlayer {
         return audioPlayer?.currentTime ?? TimeInterval(0)
     }
     
-    func getDuration() -> Double {
+    func getDuration() -> TimeInterval {
         return Double(audioPlayer?.duration ?? 0)
     }
 }

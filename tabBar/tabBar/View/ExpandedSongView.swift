@@ -154,6 +154,10 @@ struct ExpandedSongView: View {
         }
         .onReceive(timer) { _ in
             self.currentTime = vm.getCurrentTime()
+            
+            if !self.vm.isPlaying() {
+                self.isPlaying = false
+            }
         }
     }
     
@@ -172,14 +176,12 @@ struct ExpandedSongView: View {
                         SongHeaderAndShareView(song.title, artist: song.artist)
                             .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
-                        SongStatus(spacing: spacing, status: $currentTime, duration: song.duration, progress: 0.1)
+                        SongStatus(spacing: spacing, status: $currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
                     }
    
                 }
                 .frame(height: size.height/2.5, alignment: .top)
-                
-                Text("\(currentTime)")
-                
+
                 Spacer(minLength: 10)
                 
 //                Play controls

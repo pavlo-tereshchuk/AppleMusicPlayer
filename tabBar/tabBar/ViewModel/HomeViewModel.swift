@@ -49,11 +49,23 @@ class HomeViewModel: ObservableObject {
         audioPlayer.prepareToPlay(song)
     }
     
+    func play() {
+        audioPlayer.play()
+    }
+    
+    func playAtTime(atTime: TimeInterval) {
+        audioPlayer.play(atTime: atTime)
+    }
+    
     func pause_play() {
         audioPlayer.pause_play()
     }
     
-    func setCurrentTime(_ time: Double) {
+    func pause() {
+        audioPlayer.pause()
+    }
+    
+    func setCurrentTime(_ time: TimeInterval) {
         audioPlayer.setCurrentTime(time)
     }
     
@@ -65,7 +77,7 @@ class HomeViewModel: ObservableObject {
         return audioPlayer.isPlaying() ?? false
     }
      
-    func getDuration() -> Double {
+    func getDuration() -> TimeInterval {
         return audioPlayer.getDuration()
     }
     
