@@ -168,7 +168,7 @@ struct ExpandedSongView: View {
             let size = $0.size
             let spacing = size.height * 0.04
             
-            VStack(spacing: 0) {
+            VStack(spacing: spacing) {
                 
                 VStack(spacing: spacing) {
                     
@@ -180,12 +180,11 @@ struct ExpandedSongView: View {
                     }
    
                 }
-                .frame(height: size.height/2.5, alignment: .top)
-
-                Spacer(minLength: 10)
+                .frame(height: size.height/3.2, alignment: .top)
+                 
                 
 //                Play controls
-                HStack(spacing: 0) {
+                HStack(alignment: .center, spacing: size.width * 0.18) {
                     
                     ControlButton {
                         withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
@@ -195,10 +194,7 @@ struct ExpandedSongView: View {
                         Image(systemName: "backward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
-                    .padding(.leading, size.width * 0.1)
-                    
-                    Spacer()
-                       
+                     
                     ControlButton {
                         withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
                             isPlaying.toggle()
@@ -208,9 +204,8 @@ struct ExpandedSongView: View {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 300 ? .largeTitle : .system(size: 50))
                     }
-                    .frame(maxHeight: .infinity)
-                    
-                    Spacer()
+                     
+        
                     
                     ControlButton {
                         withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
@@ -220,21 +215,20 @@ struct ExpandedSongView: View {
                         Image(systemName: "forward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
-                    .padding(.trailing, size.width * 0.1)
+                     
                 }
                 .foregroundColor(.white)
-//                .padding(.top, spacing)
-
-                Spacer()
+                .frame(maxHeight: .infinity)
+//                .frame(height: size.height/5)
+                 
                 
 //                Volume and below
-                VStack(spacing: spacing) {
+                VStack(spacing: spacing * 2) {
                     
-                    VolumeStatus(spacing: spacing, progress: 0.1)
-//                        .padding(.top, spacing * 2)
-                        .padding(.bottom, spacing)
+                    VolumeStatus(spacing: 15, progress: 0.1)
                     
-                    HStack(alignment: .bottom, spacing: size.width * 0.2) {
+                    
+                    HStack(alignment: .top, spacing: size.width * 0.18) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.05)) {
                                 quoteButton.toggle()
@@ -267,10 +261,11 @@ struct ExpandedSongView: View {
                     }
                     .foregroundColor(.white)
                     .font(.title2)
+                     
 //                    .blendMode(.overlay)
                 }
-                .frame(height: size.height/2.5, alignment: .bottom)
-//                .padding(.bottom, spacing)
+                .frame(height: size.height/3.5, alignment: .bottom)
+                 
             }
             .frame(maxHeight: .infinity)
         }
@@ -346,7 +341,8 @@ struct ExpandedSongView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
-//                .scaleEffect( isPlaying ? 1 : 0.8)
+                .scaleEffect( isPlaying ? 1 : 0.8)
+                 
 
             if minimizedImage {
                 SongHeaderAndShareView(song.title, artist: song.artist)

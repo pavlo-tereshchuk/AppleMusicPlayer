@@ -31,11 +31,11 @@ struct VolumeStatus: View {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(.gray)
-                        .frame(height: isPressed ? 12 : 7)
+                        .frame(height: isPressed ? 10 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(isPressed ? .white : Color(UIColor.lightGray))
-                                .frame(height: isPressed ? 12 : 7)
+                                .frame(height: isPressed ? 10 : 7)
                                 .scaleEffect(x: progress, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
