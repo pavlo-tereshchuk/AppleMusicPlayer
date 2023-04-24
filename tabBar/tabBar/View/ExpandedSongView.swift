@@ -11,6 +11,7 @@ import SwiftUI
 struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
     @Binding var isPlaying: Bool
+    @Binding var isFinished: Bool
     @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
@@ -58,24 +59,9 @@ struct ExpandedSongView: View {
     @State private var currentTime: TimeInterval = 0
 
     
-    let timer = Timer.publish(every: 0.5, on: .main, in: .common)
+    let timer = Timer.publish(every: 0.25, on: .main, in: .common)
         .autoconnect()
-    
-    
-//    Drop down menu buttons
-    private let dropDownMenuItems = [
-        "Add to Library" : "plus",
-        "Add to a Playlist..." : "text.badge.plus",
-        "Play Next" : "text.insert",
-        "Play Last" : "text.append",
-        "Share Song..." : "square.and.arrow.up",
-        "View Full Lyrics" : "text.quote",
-        "Share Lyrics" : "",
-        "Show Album" : "music.note.list",
-        "Create Station" : "badge.plus.radiowaves.right",
-        "Love" : "heart",
-        "Suggest Less Like This" : "hand.thumbsdown"
-    ]
+
     
     var body: some View {
         GeometryReader {
@@ -114,7 +100,7 @@ struct ExpandedSongView: View {
                         .matchedGeometryEffect(id: "ICON1", in: animation)
                         .frame(height: size.width - 50)
                         .padding(.vertical, size.height > 700 ? 30 : 10)
-                        
+                     
                         PlayerView(size)
                             .offset(y: animateContent ? 0 : size.height)
                     }
@@ -153,7 +139,10 @@ struct ExpandedSongView: View {
             }
         }
         .onReceive(timer) { _ in
-            self.currentTime = vm.getCurrentTime()
+            self.isFinished = vm.isFinished()
+            if !isFinished {
+                self.currentTime = vm.getCurrentTime() ?? self.currentTime
+            }
             
             if !self.vm.isPlaying() {
                 self.isPlaying = false
@@ -163,7 +152,7 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func PlayerView(_ size: CGSize) -> some View{
-        let song = vm.getCurrentSong()
+        let song = vm.songs[vm.currentSong]
         GeometryReader {
             let size = $0.size
             let spacing = size.height * 0.04
@@ -181,53 +170,50 @@ struct ExpandedSongView: View {
    
                 }
                 .frame(height: size.height/3.2, alignment: .top)
-                 
-                
+                                
 //                Play controls
                 HStack(alignment: .center, spacing: size.width * 0.18) {
-                    
+
                     ControlButton {
-                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
-                            // Action to play prev song
+                        if (currentTime < 5) {
+                            vm.playPrev()
+                        } else {
+                            vm.setCurrentTime(0)
                         }
                     } content: {
                         Image(systemName: "backward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
-                     
+
                     ControlButton {
-                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
-                            isPlaying.toggle()
-                            vm.pause_play()
-                        }
+                        isPlaying.toggle()
+                        vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 300 ? .largeTitle : .system(size: 50))
                     }
-                     
-        
-                    
+
+
+
                     ControlButton {
-                        withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6)) {
-                            // Action to play prev song
-                        }
+                        vm.playNext()
                     } content: {
                         Image(systemName: "forward.fill")
                             .font(size.height < 300 ? .title3 : .title2)
                     }
-                     
+
                 }
                 .foregroundColor(.white)
                 .frame(maxHeight: .infinity)
 //                .frame(height: size.height/5)
-                 
-                
+
+
 //                Volume and below
                 VStack(spacing: spacing * 2) {
-                    
+
                     VolumeStatus(spacing: 15, progress: 0.1)
-                    
-                    
+
+
                     HStack(alignment: .top, spacing: size.width * 0.18) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.05)) {
@@ -236,21 +222,21 @@ struct ExpandedSongView: View {
                         } label: {
                             customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
                         }
-                       
-                        
+
+
                         VStack(spacing: 6) {
                             Button {
-                                
+
                             } label: {
                                 Image(systemName: "airpods")
                             }
-                            
+
                             Text("pablo 2")
                                 .font(.caption)
                         }
                         .foregroundColor(Color(UIColor.lightGray))
 
-                        
+
                         Button {
                             withAnimation(.easeInOut(duration: 0.05)) {
                                 listButton.toggle()
@@ -261,7 +247,7 @@ struct ExpandedSongView: View {
                     }
                     .foregroundColor(.white)
                     .font(.title2)
-                     
+
 //                    .blendMode(.overlay)
                 }
                 .frame(height: size.height/3.5, alignment: .bottom)
@@ -288,13 +274,13 @@ struct ExpandedSongView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Menu {
-                ForEach(dropDownMenuItems.indices.sorted(), id: \.self) { index in
+                ForEach(vm.dropDownMenuItems.indices.sorted(), id: \.self) { index in
                     Button {
 
                     } label: {
                         HStack {
-                            Text(dropDownMenuItems[index].key)
-                            Image(systemName: dropDownMenuItems[index].value)
+                            Text(vm.dropDownMenuItems[index].key)
+                            Image(systemName: vm.dropDownMenuItems[index].value)
                         }
                     }
                 }
@@ -330,19 +316,21 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
-        let song = vm.getCurrentSong()
+        let song = vm.songs[vm.currentSong]
 
         var imageFrame: CGSize {
             minimizedImage ? CGSize(width: 65, height: 65) : size
         }
+    
         HStack(spacing: size.width * 0.04) {
+//            TODO: ADD Shadow
             Image(uiImage: song.image!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
                 .scaleEffect( isPlaying ? 1 : 0.8)
-                 
+                .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
 
             if minimizedImage {
                 SongHeaderAndShareView(song.title, artist: song.artist)

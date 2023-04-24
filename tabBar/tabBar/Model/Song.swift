@@ -15,6 +15,7 @@ class Song {
     var title: String = ""
     var artist: String = ""
     var duration: Double = 0
+    var lyrics: String = ""
     var url: URL
     var image: UIImage? = UIImage(named: "placeholder")! {
         didSet {
@@ -29,6 +30,7 @@ class Song {
         let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
         self.url = URL(fileURLWithPath: filePath!)
         self.extractSongData()
+        print(lyrics)
     }
     
     func extractSongData(){
@@ -49,8 +51,12 @@ class Song {
                 let data = i.value as! String
                 self.artist = data
             }
-       
+            
+            if i.commonKey == .iTunesMetadataKeyLyrics{
+                let data = i.value as! String
+                self.lyrics = data
+            }
         }
-
     }
+    
 }

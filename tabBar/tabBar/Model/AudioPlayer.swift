@@ -9,9 +9,10 @@ import Foundation
 import AVFoundation
 import SwiftUI
 
-class AudioPlayer {
+class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     
     private var audioPlayer: AVAudioPlayer?
+    private var finished = false
     static private var instance: AudioPlayer?
     
     static func getInstance() -> AudioPlayer {
@@ -42,22 +43,18 @@ class AudioPlayer {
 }
     
     func play() {
+        if finished {
+            finished = false
+        }
         audioPlayer?.play()
     }
     
     func play(atTime: TimeInterval) {
+        if finished {
+            finished = false
+        }
         audioPlayer?.play(atTime: atTime)
     }
-    
-    func pause_play() {
-        if let audioPlayer = audioPlayer {
-            if audioPlayer.isPlaying {
-                audioPlayer.pause()
-            } else {
-                audioPlayer.play()
-            }
-    }
-}
     
     func pause() {
         audioPlayer?.pause()
@@ -65,6 +62,10 @@ class AudioPlayer {
     
     func isPlaying() -> Bool? {
         return audioPlayer?.isPlaying
+    }
+    
+    func isFinished() -> Bool {
+        return self.finished
     }
     
     func setCurrentTime(_ time: TimeInterval) {
@@ -77,5 +78,12 @@ class AudioPlayer {
     
     func getDuration() -> TimeInterval {
         return Double(audioPlayer?.duration ?? 0)
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        player.pause()
+        player.currentTime = 0
+        finished = true
+        
     }
 }

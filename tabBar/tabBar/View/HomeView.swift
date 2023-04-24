@@ -11,6 +11,7 @@ struct HomeView: View {
     @ObservedObject var vm: HomeViewModel
     @State private var expandScheet = false
     @State var isPlaying: Bool = false
+    @State var isFinished: Bool = false
     @Namespace private var animation
     
     
@@ -28,7 +29,7 @@ struct HomeView: View {
         }
         .overlay {
             if expandScheet {
-                ExpandedSongView(expandScheet: $expandScheet, isPlaying: $isPlaying, vm: vm, animation: animation)
+                ExpandedSongView(expandScheet: $expandScheet, isPlaying: $isPlaying, isFinished: $isFinished, vm: vm, animation: animation)
                     .transition(.asymmetric(insertion: .identity, removal: .offset(y: -5)))
             }
         }
@@ -85,7 +86,7 @@ struct MusicInfo: View {
     
     
     var body: some View {
-        let song = vm.getCurrentSong()
+        let song = vm.songs[vm.currentSong]
 
         HStack(spacing: 0) {
             ZStack {
@@ -125,7 +126,7 @@ struct MusicInfo: View {
             .padding(.horizontal, 15)
             
             Button {
-                
+                vm.playNext()
             } label: {
                 Image(systemName: "forward.fill")
             }

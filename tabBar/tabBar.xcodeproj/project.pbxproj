@@ -20,6 +20,8 @@
 		C5E1FD5A29EED56400F0AF09 /* SongStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD5929EED56400F0AF09 /* SongStatus.swift */; };
 		C5E1FD5C29EFE25200F0AF09 /* VolumeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD5B29EFE25200F0AF09 /* VolumeStatus.swift */; };
 		C5E1FD5F29F0277200F0AF09 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD5E29F0277200F0AF09 /* Extensions.swift */; };
+		C5E1FD6129F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 */; };
+		C5E1FD6529F6C41A00F0AF09 /* Mermaids.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		C5E1FD5929EED56400F0AF09 /* SongStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongStatus.swift; sourceTree = "<group>"; };
 		C5E1FD5B29EFE25200F0AF09 /* VolumeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeStatus.swift; sourceTree = "<group>"; };
 		C5E1FD5E29F0277200F0AF09 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3; sourceTree = "<group>"; };
+		C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Mermaids.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,8 +98,8 @@
 			isa = PBXGroup;
 			children = (
 				C56CEA7D29D33FD900205820 /* HomeView.swift */,
-				C5E1FD5429EDA8FF00F0AF09 /* Components */,
 				C516A14029D6E484007CD723 /* ExpandedSongView.swift */,
+				C5E1FD5429EDA8FF00F0AF09 /* Components */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -121,6 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				C5E1FD4C29E6EC7200F0AF09 /* song.mp3 */,
+				C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 */,
+				C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */,
 			);
 			path = Songs;
 			sourceTree = "<group>";
@@ -200,8 +206,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5E1FD6129F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 in Resources */,
 				C56CEA7629D3366900205820 /* Preview Assets.xcassets in Resources */,
 				C56CEA7329D3366900205820 /* Assets.xcassets in Resources */,
+				C5E1FD6529F6C41A00F0AF09 /* Mermaids.mp3 in Resources */,
 				C5E1FD4D29E6EC7200F0AF09 /* song.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
