@@ -10,11 +10,13 @@ import SwiftUI
 struct VolumeStatus: View {
     let spacing: CGFloat
     @State private var isPressed: Bool = false
-    @State var progress: Double
+    @State var volume: Double
+    let onVolumeSet: (Float) -> Void
     
-    init(spacing: CGFloat, progress: Double) {
+    init(spacing: CGFloat, volume: Double, onVolumeSet: @escaping (Float) -> Void) {
         self.spacing = spacing
-        self.progress = progress
+        self.volume = volume
+        self.onVolumeSet = onVolumeSet
     }
     
     var body: some View {
@@ -31,12 +33,12 @@ struct VolumeStatus: View {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(.gray)
-                        .frame(height: isPressed ? 10 : 7)
+                        .frame(height: isPressed ? 12 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(isPressed ? .white : Color(UIColor.lightGray))
-                                .frame(height: isPressed ? 10 : 7)
-                                .scaleEffect(x: progress, anchor: .leading)
+                                .frame(height: isPressed ? 12 : 7)
+                                .scaleEffect(x: volume, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
@@ -48,10 +50,11 @@ struct VolumeStatus: View {
                                 isPressed = true
                             }
                             let x = value.location.x
-                            self.progress = x >= width ? self.progress : x/width
+                            self.volume = x >= width ? self.volume : x/width
                         })
                         .onEnded({ value in
                             withAnimation(.easeInOut(duration: 0.3)) {
+                                onVolumeSet(Float(self.volume))
                                 isPressed = false
                             }
                         }))
@@ -69,7 +72,7 @@ struct VolumeStatus: View {
 
 struct VolumeStatus_Previews: PreviewProvider {
     static var previews: some View {
-        VolumeStatus(spacing: 10, progress: 0.1)
+        VolumeStatus(spacing: 10, volume: 0.1, onVolumeSet: {_ in})
             .preferredColorScheme(.dark)
     }
 }

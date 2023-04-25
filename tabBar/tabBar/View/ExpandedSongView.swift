@@ -57,6 +57,7 @@ struct ExpandedSongView: View {
     }
     @State private var offsetY: CGFloat = 0
     @State private var currentTime: TimeInterval = 0
+    @State private var currentVolume: Double = 0
 
     
     let timer = Timer.publish(every: 0.25, on: .main, in: .common)
@@ -140,13 +141,17 @@ struct ExpandedSongView: View {
         }
         .onReceive(timer) { _ in
             self.isFinished = vm.isFinished()
+            print(vm.isFinished())
             if !isFinished {
                 self.currentTime = vm.getCurrentTime() ?? self.currentTime
+            } else {
+                self.vm.playNext()
             }
             
-            if !self.vm.isPlaying() {
-                self.isPlaying = false
-            }
+            self.isPlaying = self.vm.isPlaying()
+            
+            
+            self.currentVolume = Double(vm.getVolume())
         }
     }
     
@@ -207,11 +212,15 @@ struct ExpandedSongView: View {
                 .frame(maxHeight: .infinity)
 //                .frame(height: size.height/5)
 
+                Text(String(vm.getVolume()))
+                Text(String(vm.isFinished()))
 
 //                Volume and below
                 VStack(spacing: spacing * 2) {
 
-                    VolumeStatus(spacing: 15, progress: 0.1)
+                    VolumeStatus(spacing: 15, volume: Double(vm.getVolume())) { volume in
+                        vm.setVolume(volume)
+                    }
 
 
                     HStack(alignment: .top, spacing: size.width * 0.18) {

@@ -27,6 +27,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     do {
         // Initialize the audio player with the song file
         audioPlayer = try AVAudioPlayer(contentsOf: song.url)
+        audioPlayer?.delegate = self
         
         // Play the song
         audioPlayer?.prepareToPlay()
@@ -72,8 +73,8 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         audioPlayer?.currentTime = time
     }
     
-    func getCurrentTime() -> TimeInterval {
-        return audioPlayer?.currentTime ?? TimeInterval(0)
+    func getCurrentTime() -> TimeInterval? {
+        return audioPlayer?.currentTime
     }
     
     func getDuration() -> TimeInterval {
@@ -83,7 +84,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         player.pause()
         player.currentTime = 0
-        finished = true
+        self.finished = true
         
     }
 }

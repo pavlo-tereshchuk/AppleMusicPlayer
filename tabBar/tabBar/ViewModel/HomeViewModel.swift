@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import MediaPlayer
 
 class HomeViewModel: ObservableObject {
     @Published var songs: [Song] = [Song(name: "")]
@@ -36,11 +37,16 @@ class HomeViewModel: ObservableObject {
         self.prepareToPlay(getCurrentSong())
     }
     
+//    MARK: Player controls
     func playNext() {
         let nextSong = {
             if self.currentSong + 1 < self.songs.count {
                 self.currentSong += 1
                 self.prepareToPlay(self.getCurrentSong())
+
+                if self.isFinished() {
+                    self.play()
+                }
             }
         }
         
@@ -118,7 +124,7 @@ class HomeViewModel: ObservableObject {
         audioPlayer.setCurrentTime(time)
     }
     
-    func getCurrentTime() -> TimeInterval {
+    func getCurrentTime() -> TimeInterval? {
        return audioPlayer.getCurrentTime()
     }
     
@@ -132,6 +138,16 @@ class HomeViewModel: ObservableObject {
      
     func getDuration() -> TimeInterval {
         return audioPlayer.getDuration()
+    }
+    
+//    MARK: Volume
+    
+    func getVolume() -> Float {
+        return MPVolumeView.getVolume()
+    }
+    
+    func setVolume(_ volume: Float) {
+        MPVolumeView.setVolume(volume)
     }
     
 }
