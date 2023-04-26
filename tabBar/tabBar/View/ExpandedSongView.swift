@@ -339,6 +339,11 @@ struct ExpandedSongView: View {
                 .frame(width: imageFrame.width, height: imageFrame.height)
                 .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
                 .scaleEffect( isPlaying ? 1 : 0.8)
+                .shadow(
+                    color: Color.black
+                        .opacity(isPlaying ? 0.65 : 0.3),
+                    radius: 20,
+                    y: isPlaying ? 10 : 5)
                 .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
 
             if minimizedImage {
