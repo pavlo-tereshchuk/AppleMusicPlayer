@@ -83,7 +83,6 @@ class HomeViewModel: ObservableObject {
             
             if let mp3Files = mp3Files {
                 self.songs = mp3Files.compactMap({Song(name: $0.split(separator: ".").map(String.init)[0])})
-                print(songs.compactMap({$0.title}))
                 return true
             }
         } else {

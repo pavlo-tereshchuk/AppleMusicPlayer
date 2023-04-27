@@ -29,11 +29,13 @@ struct SongStatus: View {
             VStack(alignment: .center, spacing: spacing) {
                 ZStack(alignment: .leading) {
                     Rectangle()
-                        .fill(.gray)
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.2)
                         .frame(height: isPressed ? 12 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
-                                .fill(isPressed ? .white : Color(UIColor.lightGray))
+                                .fill(.white)
+                                .opacity(isPressed ? 1 : 0.65)
                                 .frame(height: isPressed ? 12 : 7)
                                 .scaleEffect(x: progress, anchor: .leading)
                         }
@@ -49,7 +51,9 @@ struct SongStatus: View {
                     Text(isPressed ? "-\((duration - (newStatus * duration)).minuteSecond)" : "-\((duration - status).minuteSecond)")
                 }
                 .font(.caption2)
-                .foregroundColor(isPressed ? .white : .gray)
+                .foregroundColor(.white)
+                .foregroundStyle(.ultraThinMaterial)
+                .opacity(isPressed ? 1 : 0.2)
                 
             }
             .padding(.horizontal, isPressed ? 0 : 5)
@@ -75,9 +79,10 @@ struct SongStatus: View {
 }
 
 struct SongStatus_Previews: PreviewProvider {
-    @State static var status = TimeInterval(0.1)
+    @State static var status = TimeInterval(55)
     static var previews: some View {
         SongStatus(spacing: 10, status: $status, duration: 144)
+            .environment(\.colorScheme, .light)
             .preferredColorScheme(.dark)
         
     }

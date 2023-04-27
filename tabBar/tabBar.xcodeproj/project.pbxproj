@@ -14,7 +14,7 @@
 		C56CEA7629D3366900205820 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C56CEA7529D3366900205820 /* Preview Assets.xcassets */; };
 		C56CEA7E29D33FD900205820 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56CEA7D29D33FD900205820 /* HomeView.swift */; };
 		C5E1FD4B29E08B8100F0AF09 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */; };
-		C5E1FD4D29E6EC7200F0AF09 /* song.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD4C29E6EC7200F0AF09 /* song.mp3 */; };
+		C5E1FD4D29E6EC7200F0AF09 /* Juice Jones.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD4C29E6EC7200F0AF09 /* Juice Jones.mp3 */; };
 		C5E1FD5029E84A2700F0AF09 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD4F29E84A2700F0AF09 /* HomeViewModel.swift */; };
 		C5E1FD5329ED7F9700F0AF09 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD5229ED7F9600F0AF09 /* Song.swift */; };
 		C5E1FD5A29EED56400F0AF09 /* SongStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD5929EED56400F0AF09 /* SongStatus.swift */; };
@@ -33,7 +33,7 @@
 		C56CEA7529D3366900205820 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C56CEA7D29D33FD900205820 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
-		C5E1FD4C29E6EC7200F0AF09 /* song.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = song.mp3; sourceTree = "<group>"; };
+		C5E1FD4C29E6EC7200F0AF09 /* Juice Jones.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Juice Jones.mp3"; sourceTree = "<group>"; };
 		C5E1FD4F29E84A2700F0AF09 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		C5E1FD5229ED7F9600F0AF09 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		C5E1FD5929EED56400F0AF09 /* SongStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongStatus.swift; sourceTree = "<group>"; };
@@ -124,7 +124,7 @@
 		C5E1FD5129E84C3600F0AF09 /* Songs */ = {
 			isa = PBXGroup;
 			children = (
-				C5E1FD4C29E6EC7200F0AF09 /* song.mp3 */,
+				C5E1FD4C29E6EC7200F0AF09 /* Juice Jones.mp3 */,
 				C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM_Studio_Outtakes_Official_Audio_320.mp3 */,
 				C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */,
 			);
@@ -210,7 +210,7 @@
 				C56CEA7629D3366900205820 /* Preview Assets.xcassets in Resources */,
 				C56CEA7329D3366900205820 /* Assets.xcassets in Resources */,
 				C5E1FD6529F6C41A00F0AF09 /* Mermaids.mp3 in Resources */,
-				C5E1FD4D29E6EC7200F0AF09 /* song.mp3 in Resources */,
+				C5E1FD4D29E6EC7200F0AF09 /* Juice Jones.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

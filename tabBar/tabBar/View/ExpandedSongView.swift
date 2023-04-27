@@ -68,13 +68,14 @@ struct ExpandedSongView: View {
         GeometryReader {
             let size = $0.size
             let safeArea = $0.safeAreaInsets
+            let song = vm.songs[vm.currentSong]
             
             ZStack {
                 RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
                     .fill(.ultraThickMaterial)
                     .overlay {
                         RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
-                            .fill(Color("Background"))
+                            .fill(LinearGradient(colors: song.image!.getAverageColors(), startPoint: .topLeading, endPoint: .bottomTrailing))
                             .opacity(animateContent ? 1:0)
                     }
                     .overlay(alignment: .top) {
@@ -88,9 +89,9 @@ struct ExpandedSongView: View {
                
                 VStack {
                     Capsule()
-                        .fill(.gray)
+                        .foregroundStyle(.ultraThickMaterial)
                         .frame(width: 40, height: 5)
-                        .opacity(animateContent ? 1 : 0)
+                        .opacity(animateContent ? 0.65 : 0)
                         .offset(y: animateContent ? 0 : size.height)
                     
                     VStack(spacing: 15) {
@@ -132,6 +133,7 @@ struct ExpandedSongView: View {
                         }
                     })
             )
+            .environment(\.colorScheme, .light)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 0.35)) {
@@ -141,7 +143,6 @@ struct ExpandedSongView: View {
         }
         .onReceive(timer) { _ in
             self.isFinished = vm.isFinished()
-            print(vm.isFinished())
             if !isFinished {
                 self.currentTime = vm.getCurrentTime() ?? self.currentTime
             } else {
@@ -212,8 +213,6 @@ struct ExpandedSongView: View {
                 .frame(maxHeight: .infinity)
 //                .frame(height: size.height/5)
 
-                Text(String(vm.getVolume()))
-                Text(String(vm.isFinished()))
 
 //                Volume and below
                 VStack(spacing: spacing * 2) {
@@ -243,7 +242,8 @@ struct ExpandedSongView: View {
                             Text("pablo 2")
                                 .font(.caption)
                         }
-                        .foregroundColor(Color(UIColor.lightGray))
+                        .foregroundStyle(.ultraThickMaterial)
+                        .opacity(0.65)
 
 
                         Button {
@@ -254,12 +254,9 @@ struct ExpandedSongView: View {
                             customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
                         }
                     }
-                    .foregroundColor(.white)
-                    .font(.title2)
-
-//                    .blendMode(.overlay)
                 }
                 .frame(height: size.height/3.5, alignment: .bottom)
+                
                  
             }
             .frame(maxHeight: .infinity)
@@ -278,7 +275,8 @@ struct ExpandedSongView: View {
                     .foregroundColor(.white)
                 Text(artist)
                     .font(minimizedImage ? .footnote : .body)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.ultraThickMaterial)
+                    .opacity(0.65)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -300,7 +298,8 @@ struct ExpandedSongView: View {
                     .background {
                         Circle()
                             .fill(.ultraThinMaterial)
-                            .environment(\.colorScheme, .light)
+                            .opacity(0.2)
+                        
                     }
             }
         }
@@ -308,18 +307,21 @@ struct ExpandedSongView: View {
     
     @ViewBuilder
     func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0) -> some View {
+        let song = vm.songs[vm.currentSong]
         Image(systemName: imageName)
-            .foregroundColor(toggleButton ? Color(UIColor.darkGray) : Color(UIColor.lightGray))
+            .foregroundColor(Color(toggleButton ? song.image!.averageColor ?? UIColor.darkGray : UIColor.white))
+            .foregroundStyle(toggleButton ? Material.regularMaterial : .ultraThickMaterial)
+            .opacity(toggleButton ? 1 : 0.65)
             .padding(paddingEdges, paddingLength)
             .padding(.vertical, 4)
             .padding(.horizontal, 2)
             .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(UIColor.lightGray))
-                        .scaleEffect(toggleButton ? 1 : 0.6)
-                        .opacity(toggleButton ? 1 : 0)
-                }
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundColor(.white)
+                    .foregroundStyle(.ultraThickMaterial)
+                    .scaleEffect(toggleButton ? 1 : 0.6)
+                    .opacity(toggleButton ? 0.65 : 0)
+                
             }
     }
     
@@ -332,7 +334,6 @@ struct ExpandedSongView: View {
         }
     
         HStack(spacing: size.width * 0.04) {
-//            TODO: ADD Shadow
             Image(uiImage: song.image!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)

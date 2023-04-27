@@ -10,6 +10,7 @@ import SwiftUI
 import AVFoundation
 
 
+
 class Song {
     let fileName: String
     var title: String = ""
@@ -30,12 +31,12 @@ class Song {
         let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
         self.url = URL(fileURLWithPath: filePath!)
         self.extractSongData()
-        print(lyrics)
+        print("LYRICS: \(lyrics)")
     }
     
     func extractSongData(){
         let asset = AVAsset(url: url)
-
+    
         for i in asset.commonMetadata{
             if i.commonKey == .commonKeyArtwork{
                 let data = i.value as! Data
@@ -52,7 +53,7 @@ class Song {
                 self.artist = data
             }
             
-            if i.commonKey == .iTunesMetadataKeyLyrics{
+            if i.commonKey == .id3MetadataKeyOriginalLyricist{
                 let data = i.value as! String
                 self.lyrics = data
             }

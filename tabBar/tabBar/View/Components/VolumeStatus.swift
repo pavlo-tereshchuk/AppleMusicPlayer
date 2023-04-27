@@ -24,7 +24,9 @@ struct VolumeStatus: View {
             
         HStack(alignment: .center, spacing: spacing) {
             Image(systemName: "speaker.fill")
-                .foregroundColor(isPressed ? .white : .gray)
+                .foregroundColor(.white)
+                .foregroundStyle(.ultraThickMaterial)
+                .opacity(isPressed ? 1 : 0.65)
             
             GeometryReader {
                 let size = $0.size
@@ -32,13 +34,15 @@ struct VolumeStatus: View {
                 
                 ZStack(alignment: .leading) {
                     Rectangle()
-                        .fill(.gray)
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.2)
                         .frame(height: isPressed ? 12 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
-                                .fill(isPressed ? .white : Color(UIColor.lightGray))
+                                .fill(.white)
+                                .opacity(isPressed ? 1 : 0.65)
                                 .frame(height: isPressed ? 12 : 7)
-                                .scaleEffect(x: volume, anchor: .leading)
+                                .scaleEffect(x: self.volume, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
@@ -62,7 +66,9 @@ struct VolumeStatus: View {
             .frame(alignment: .center)
             
             Image(systemName: "speaker.wave.3.fill")
-                .foregroundColor(isPressed ? .white : .gray)
+                .foregroundColor(.white)
+                .foregroundStyle(.ultraThickMaterial)
+                .opacity(isPressed ? 1 : 0.65)
         }
         .padding(.horizontal, isPressed ? 0 : 5)
         .padding(.top, isPressed ? 0 : 2.5)
