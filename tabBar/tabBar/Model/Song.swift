@@ -11,7 +11,8 @@ import AVFoundation
 
 
 
-class Song {
+class Song: Identifiable {
+    let id = UUID()
     let fileName: String
     var title: String = ""
     var artist: String = ""
