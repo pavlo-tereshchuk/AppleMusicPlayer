@@ -36,12 +36,12 @@ struct VolumeStatus: View {
                     Rectangle()
                         .fill(.ultraThinMaterial)
                         .opacity(0.2)
-                        .frame(height: isPressed ? 12 : 7)
+                        .frame(height: isPressed ? 14 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(.white)
                                 .opacity(isPressed ? 1 : 0.65)
-                                .frame(height: isPressed ? 12 : 7)
+                                .frame(height: isPressed ? 14 : 7)
                                 .scaleEffect(x: self.volume, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))

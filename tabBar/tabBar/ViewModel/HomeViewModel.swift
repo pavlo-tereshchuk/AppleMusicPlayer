@@ -90,7 +90,7 @@ class HomeViewModel: ObservableObject {
         }
         return false
     }
-//    here
+
     func getCurrentSong() -> Song {
         return songs[currentSong]
     }

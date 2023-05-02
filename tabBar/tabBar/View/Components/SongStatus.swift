@@ -25,18 +25,18 @@ struct SongStatus: View {
             let size = $0.size
             let width = size.width
             let progress = isPressed ? self.newStatus : Double(status/duration)
-            
-            VStack(alignment: .center, spacing: spacing) {
+
+            VStack(spacing: 12) {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(.ultraThinMaterial)
                         .opacity(0.2)
-                        .frame(height: isPressed ? 12 : 7)
+                        .frame(height: isPressed ? 14 : 7)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(.white)
                                 .opacity(isPressed ? 1 : 0.65)
-                                .frame(height: isPressed ? 12 : 7)
+                                .frame(height: isPressed ? 14 : 7)
                                 .scaleEffect(x: progress, anchor: .leading)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -56,7 +56,7 @@ struct SongStatus: View {
                 .opacity(isPressed ? 1 : 0.2)
                 
             }
-            .padding(.horizontal, isPressed ? 0 : 5)
+            .padding(.horizontal, isPressed ? -5 : 0)
             .padding(.top, isPressed ? 0 : 2.5)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
@@ -73,8 +73,7 @@ struct SongStatus: View {
                             isPressed = false
                         }
                     }))
-            
-        }
+            }
     }
 }
 

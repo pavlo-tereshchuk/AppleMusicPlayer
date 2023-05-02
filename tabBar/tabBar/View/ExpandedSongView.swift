@@ -71,6 +71,7 @@ struct ExpandedSongView: View {
             let song = vm.songs[vm.currentSong]
             
             ZStack {
+                
                 RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
                     .fill(.ultraThickMaterial)
                     .overlay {
@@ -86,8 +87,9 @@ struct ExpandedSongView: View {
                     .matchedGeometryEffect(id: "bigView", in: animation)
                     
 
-               
-                VStack {
+                let spacing = size.height * 0.04
+                
+                VStack(spacing: spacing) {
                     Capsule()
                         .foregroundStyle(.ultraThickMaterial)
                         .frame(width: 40, height: 5)
@@ -95,16 +97,12 @@ struct ExpandedSongView: View {
                         .offset(y: animateContent ? 0 : size.height)
                     
                     VStack(spacing: 15) {
-                        GeometryReader {
-                            let size = $0.size
-                            SongImageAndHeaderShareView(size)
-                        }
-                        .matchedGeometryEffect(id: "ICON1", in: animation)
-                        .frame(height: size.width - 50)
-                        .padding(.vertical, size.height > 700 ? 30 : 10)
-                     
+                        
+                        SongImageAndHeaderShareView(size)
+                            .frame(height: size.height/2)
+
+                        
                         PlayerView(size)
-                            .offset(y: animateContent ? 0 : size.height)
                     }
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
@@ -159,27 +157,31 @@ struct ExpandedSongView: View {
     @ViewBuilder
     func PlayerView(_ size: CGSize) -> some View{
         let song = vm.songs[vm.currentSong]
-        GeometryReader {
-            let size = $0.size
-            let spacing = size.height * 0.04
+        let spacing = size.height * 0.04
+        VStack {
             
-            VStack(spacing: spacing) {
-                
-                VStack(spacing: spacing) {
+            
+            
+            if (!minimizedImage) {
+                VStack(spacing: 20) {
+                    SongHeaderAndShareView(song.title, artist: song.artist)
+                        .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                     
-                    if (!minimizedImage) {
-                        SongHeaderAndShareView(song.title, artist: song.artist)
-                            .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
-                        
-                        SongStatus(spacing: spacing, status: $currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
-                    }
-   
+                   SongStatus(spacing: spacing, status: $currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
+                    
+                    
                 }
-                .frame(height: size.height/3.2, alignment: .top)
-                                
-//                Play controls
-                HStack(alignment: .center, spacing: size.width * 0.18) {
+                .frame(height: size.height/6.5)
+                .border(.black)
+            }
 
+            //Play controls
+            
+            GeometryReader {
+                let size = $0.size
+                                                
+                HStack(alignment: .center, spacing: size.width * 0.18) {
+                    
                     ControlButton {
                         if (currentTime < 5) {
                             vm.playPrev()
@@ -188,80 +190,82 @@ struct ExpandedSongView: View {
                         }
                     } content: {
                         Image(systemName: "backward.fill")
-                            .font(size.height < 300 ? .title3 : .title2)
+                            .font(size.height < 100 ? .title3 : .title2)
                     }
-
+                    
                     ControlButton {
                         isPlaying.toggle()
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                            .font(size.height < 300 ? .largeTitle : .system(size: 50))
+                            .font(size.height < 100 ? .largeTitle : .system(size: 50))
                     }
-
-
-
+                    
+                    
+                    
                     ControlButton {
                         vm.playNext()
                     } content: {
                         Image(systemName: "forward.fill")
-                            .font(size.height < 300 ? .title3 : .title2)
+                            .font(size.height < 100 ? .title3 : .title2)
                     }
-
+                    
                 }
                 .foregroundColor(.white)
-                .frame(maxHeight: .infinity)
-
-
-//                Volume and below
-                VStack(spacing: spacing * 2) {
-
-                    VolumeStatus(spacing: 15, volume: Double(vm.getVolume())) { volume in
-                        vm.setVolume(volume)
-                    }
-
-
-                    HStack(alignment: .top, spacing: size.width * 0.18) {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.05)) {
-                                quoteButton.toggle()
-                            }
-                        } label: {
-                            customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
-                        }
-
-
-                        VStack(spacing: 6) {
-                            Button {
-
-                            } label: {
-                                Image(systemName: "airpods")
-                            }
-
-                            Text("pablo 2")
-                                .font(.caption)
-                        }
-                        .foregroundStyle(.ultraThickMaterial)
-                        .opacity(0.65)
-
-
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.05)) {
-                                listButton.toggle()
-                            }
-                        } label: {
-                            customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
-                        }
-                    }
-                }
-                .frame(height: size.height/3.5, alignment: .bottom)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-                 
+                
+                
             }
             .frame(maxHeight: .infinity)
+            .border(.black)
+//            Spacer()
+            
+            //Volume + Bottom buttons
+            
+            VStack(spacing: spacing) {
+                
+                VolumeStatus(spacing: 15, volume: Double(vm.getVolume())) { volume in
+                    vm.setVolume(volume)
+                }
+                
+                HStack(alignment: .top, spacing: size.width * 0.18) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            quoteButton.toggle()
+                        }
+                    } label: {
+                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
+                    }
+                    
+                    
+                    VStack(spacing: 6) {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "airpods")
+                        }
+                        
+                        Text("pablo 2")
+                            .font(.caption)
+                    }
+                    .foregroundStyle(.ultraThickMaterial)
+                    .opacity(0.65)
+                    
+                    
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.05)) {
+                            listButton.toggle()
+                        }
+                    } label: {
+                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
+                    }
+                }
+                .frame(alignment: .bottom)
+            }
+            .frame(alignment: .bottom)
         }
-        
-        
+        .offset(y: animateContent ? 0 : size.height)
     }
     
     @ViewBuilder
@@ -269,7 +273,7 @@ struct ExpandedSongView: View {
         HStack(alignment: .center, spacing: 15) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(minimizedImage ? .headline : .title3 )
+                    .font(minimizedImage ? .subheadline : .title3 )
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                 Text(artist)
@@ -291,15 +295,16 @@ struct ExpandedSongView: View {
                     }
                 }
             } label: {
-                Image(systemName: "ellipsis")
-                    .foregroundColor(.white)
-                    .padding(12)
-                    .background {
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .opacity(0.2)
-                        
-                    }
+                ZStack {
+                    
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.2)
+                    
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(.white)
+                }
+                .frame(width: 30, height: 30)
             }
         }
     }
@@ -327,30 +332,38 @@ struct ExpandedSongView: View {
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
         let song = vm.songs[vm.currentSong]
+        let spacing = size.height * 0.04
 
         var imageFrame: CGSize {
-            minimizedImage ? CGSize(width: 65, height: 65) : size
+            minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
         }
-    
-        HStack(spacing: size.width * 0.04) {
-            Image(uiImage: song.image!)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: imageFrame.width, height: imageFrame.height)
-                .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
-                .scaleEffect( isPlaying ? 1 : 0.8)
-                .shadow(
-                    color: Color.black
-                        .opacity(isPlaying ? 0.65 : 0.3),
-                    radius: 20,
-                    y: isPlaying ? 10 : 5)
-                .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
-
+        
+        HStack(spacing: 15) {
+            ZStack {
+                Image(uiImage: song.image!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
+                    .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.8)
+                    .shadow(
+                        color: Color.black
+                            .opacity(minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),
+                        radius: 20,
+                        y: minimizedImage ? 0 : isPlaying ? 10 : 5)
+                    .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
+                    .matchedGeometryEffect(id: "ICON1", in: animation)
+                    .padding(.vertical, minimizedImage ? 0 : size.height > 700 ? 30 : 10)
+            }
+            .frame(width: imageFrame.width, height: imageFrame.height)
+            
             if minimizedImage {
                 SongHeaderAndShareView(song.title, artist: song.artist)
                     .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
             }
         }
+            
+
     }
 }
 

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SongsList: View {
-    @State var songs: [Song]
+    @Binding var songs: [Song]
     var scrollTo: Song?
     @State private var listOffset: CGFloat = 0
     
-    init(songs: [Song], scrollTo: Song? = nil) {
-        self.songs = songs
+    init(songs: Binding<[Song]>, scrollTo: Song? = nil) {
+        self._songs = songs
         self.scrollTo = scrollTo
         self.listOffset = listOffset
     }
@@ -73,9 +73,12 @@ struct SongsList: View {
 }
 
 struct SongsList_Previews: PreviewProvider {
+    
+    @State static var songs = [Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Daft_Punk_GLBTM"),
+                               Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"),
+                               Song(name: "Juice Jones")]
 
     static var previews: some View {
-        
         ZStack {
             
             RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -85,9 +88,7 @@ struct SongsList_Previews: PreviewProvider {
                         .fill(LinearGradient(colors: [.white, .blue, .gray], startPoint: .top, endPoint: .bottomTrailing))
                 }
                 .overlay(alignment: .top) {
-                    SongsList(songs: [Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Daft_Punk_GLBTM"),
-                                      Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"),
-                                      Song(name: "Juice Jones")])
+                    SongsList(songs: $songs)
                     .frame(height: 400)
 //                    .mask(LinearGradient(gradient: Gradient(colors: [.blue, .clear]), startPoint: .top, endPoint: .bottom))
                 }
