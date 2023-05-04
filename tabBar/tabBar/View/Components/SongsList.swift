@@ -9,60 +9,65 @@ import SwiftUI
 
 struct SongsList: View {
     @Binding var songs: [Song]
+    var currentSong: Song
+    private var prevSongs: [Song] = []
+    var nextSongs: [Song] = []
     var scrollTo: Song?
-    @State private var listOffset: CGFloat = 0
+    @State private var pressedRowID = UUID()
     
-    init(songs: Binding<[Song]>, scrollTo: Song? = nil) {
+    
+    init(songs: Binding<[Song]>, currentSong: Song, scrollTo: Song? = nil) {
         self._songs = songs
+        self.currentSong = currentSong
         self.scrollTo = scrollTo
-        self.listOffset = listOffset
+        let currIndex = songs.firstIndex(where: {$0.id == currentSong.id})
+        
+        if let currIndex  = currIndex {
+            self.nextSongs = Array( songs.wrappedValue.suffix(from: currIndex + 1))
+        } else {
+            self.nextSongs = songs.wrappedValue
+        }
     }
     
     var body: some View {
+//        Text("\(songs.firstIndex(where: {$0.id == currentSong.id}) ?? 0)")
         ScrollViewReader { proxy in
-            VStack {
                 List {
-                    ForEach(songs) { song in
-                        HStack(alignment: .bottom) {
-                            Image(uiImage: song.image!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 50, height: 50)
-                                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                            
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(song.title)
-                                    .font(.body)
-                                    .foregroundColor(.white)
-                                Text(song.artist)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.ultraThickMaterial)
-                                    .opacity(0.65)
-                            }
-                            .lineLimit(1)
-                            .padding(5)
-                            
-                            Spacer()
-                        }
+                    ForEach(nextSongs) { song in
+                        SongRow(song: song)
                         .id(song.url)
                         .frame(maxWidth: .infinity)
+                        .listRowInsets(EdgeInsets())
+                        .padding(.bottom, 10)
                         .background(.clear)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                        .onTapGesture {
+                            print("TAP")
+                        }
+                        .onLongPressGesture(minimumDuration: 1) {
+                            self.pressedRowID = song.id
+                            print("Long")
+                        }
 
                     }
                     .onMove(perform: moveRow)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
+                .listStyle(InsetGroupedListStyle())
                 .environment(\.editMode, .constant(.active))
                 .scrollIndicators(.hidden)
                 .scrollContentBackground(.hidden)
                 .onAppear {
+                    UIScrollView.appearance().bounces = false
                     if let scrollTo = scrollTo {
                         proxy.scrollTo(scrollTo.url, anchor: .top)
                     }
                 }
-            }
+                .onDisappear {
+                    UIScrollView.appearance().bounces = true
+                }
+                .border(.white)
+
         }
             
     }
@@ -74,9 +79,9 @@ struct SongsList: View {
 
 struct SongsList_Previews: PreviewProvider {
     
-    @State static var songs = [Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Daft_Punk_GLBTM"),
-                               Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"), Song(name: "Juice Jones"), Song(name: "Mermaids"),
-                               Song(name: "Juice Jones")]
+    static let curSong = Song(name: "Juice Jones")
+    @State static var songs = [Song(name: "Mermaids"), curSong,
+                               Song(name: "Daft_Punk_GLBTM")]
 
     static var previews: some View {
         ZStack {
@@ -88,8 +93,9 @@ struct SongsList_Previews: PreviewProvider {
                         .fill(LinearGradient(colors: [.white, .blue, .gray], startPoint: .top, endPoint: .bottomTrailing))
                 }
                 .overlay(alignment: .top) {
-                    SongsList(songs: $songs)
+                    SongsList(songs: $songs, currentSong: curSong)
                     .frame(height: 400)
+                    .border(.black)
 //                    .mask(LinearGradient(gradient: Gradient(colors: [.blue, .clear]), startPoint: .top, endPoint: .bottom))
                 }
         }

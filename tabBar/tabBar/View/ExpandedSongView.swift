@@ -96,11 +96,11 @@ struct ExpandedSongView: View {
                         .opacity(animateContent ? 0.65 : 0)
                         .offset(y: animateContent ? 0 : size.height)
                     
-                    VStack(spacing: 15) {
+                    VStack(spacing: spacing) {
                         
                         SongImageAndHeaderShareView(size)
-                            .frame(height: size.height/2)
-
+                            .frame(height: minimizedImage ? 60 : size.height/2.075)
+                            .border(.white)
                         
                         PlayerView(size)
                     }
@@ -171,8 +171,11 @@ struct ExpandedSongView: View {
                     
                     
                 }
-                .frame(height: size.height/6.5)
-                .border(.black)
+                .frame(height: size.height/7)
+                .border(.white)
+            } else {
+                SongsList(songs: $vm.songs, currentSong: song)
+                    .frame(height: size.height/2)
             }
 
             //Play controls
@@ -181,7 +184,6 @@ struct ExpandedSongView: View {
                 let size = $0.size
                                                 
                 HStack(alignment: .center, spacing: size.width * 0.18) {
-                    
                     ControlButton {
                         if (currentTime < 5) {
                             vm.playPrev()
@@ -190,7 +192,7 @@ struct ExpandedSongView: View {
                         }
                     } content: {
                         Image(systemName: "backward.fill")
-                            .font(size.height < 100 ? .title3 : .title2)
+                            .font(size.height < 100 ? .title2 : .title)
                     }
                     
                     ControlButton {
@@ -198,7 +200,7 @@ struct ExpandedSongView: View {
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                            .font(size.height < 100 ? .largeTitle : .system(size: 50))
+                            .font(size.height < 100 ? .largeTitle : .system(size: 40))
                     }
                     
                     
@@ -207,7 +209,7 @@ struct ExpandedSongView: View {
                         vm.playNext()
                     } content: {
                         Image(systemName: "forward.fill")
-                            .font(size.height < 100 ? .title3 : .title2)
+                            .font(size.height < 100 ? .title2 : .title)
                     }
                     
                 }
@@ -218,12 +220,10 @@ struct ExpandedSongView: View {
                 
             }
             .frame(maxHeight: .infinity)
-            .border(.black)
-//            Spacer()
             
             //Volume + Bottom buttons
             
-            VStack(spacing: spacing) {
+            VStack(spacing: spacing * 1.25) {
                 
                 VolumeStatus(spacing: 15, volume: Double(vm.getVolume())) { volume in
                     vm.setVolume(volume)
@@ -236,7 +236,9 @@ struct ExpandedSongView: View {
                         }
                     } label: {
                         customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
+                            
                     }
+                    .scaleEffect(1.3)
                     
                     
                     VStack(spacing: 6) {
@@ -251,6 +253,7 @@ struct ExpandedSongView: View {
                     }
                     .foregroundStyle(.ultraThickMaterial)
                     .opacity(0.65)
+                    .scaleEffect(1.3)
                     
                     
                     Button {
@@ -259,9 +262,11 @@ struct ExpandedSongView: View {
                         }
                     } label: {
                         customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
+                            .scaleEffect(1.3)
                     }
                 }
                 .frame(alignment: .bottom)
+                
             }
             .frame(alignment: .bottom)
         }
@@ -344,8 +349,8 @@ struct ExpandedSongView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 15) : 5, style: .continuous))
-                    .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.8)
+                    .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 10) : 5, style: .continuous))
+                    .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.75)
                     .shadow(
                         color: Color.black
                             .opacity(minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),

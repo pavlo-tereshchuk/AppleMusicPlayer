@@ -23,6 +23,7 @@
 		C5E1FD6129F28AD000F0AF09 /* Daft_Punk_GLBTM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM.mp3 */; };
 		C5E1FD6529F6C41A00F0AF09 /* Mermaids.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */; };
 		C5E1FD6729FBCF5800F0AF09 /* SongsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD6629FBCF5800F0AF09 /* SongsList.swift */; };
+		C5E1FD692A026EA000F0AF09 /* SongRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E1FD682A026EA000F0AF09 /* SongRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Daft_Punk_GLBTM.mp3; sourceTree = "<group>"; };
 		C5E1FD6429F6C41A00F0AF09 /* Mermaids.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Mermaids.mp3; sourceTree = "<group>"; };
 		C5E1FD6629FBCF5800F0AF09 /* SongsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsList.swift; sourceTree = "<group>"; };
+		C5E1FD682A026EA000F0AF09 /* SongRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				C5E1FD5929EED56400F0AF09 /* SongStatus.swift */,
 				C5E1FD5B29EFE25200F0AF09 /* VolumeStatus.swift */,
 				C5E1FD6629FBCF5800F0AF09 /* SongsList.swift */,
+				C5E1FD682A026EA000F0AF09 /* SongRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				C516A14129D6E484007CD723 /* ExpandedSongView.swift in Sources */,
 				C5E1FD5F29F0277200F0AF09 /* Extensions.swift in Sources */,
 				C5E1FD6729FBCF5800F0AF09 /* SongsList.swift in Sources */,
+				C5E1FD692A026EA000F0AF09 /* SongRow.swift in Sources */,
 				C5E1FD5C29EFE25200F0AF09 /* VolumeStatus.swift in Sources */,
 				C5E1FD4B29E08B8100F0AF09 /* AudioPlayer.swift in Sources */,
 				C56CEA7E29D33FD900205820 /* HomeView.swift in Sources */,
@@ -363,6 +367,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"tabBar/Preview Content\"";
+				DEVELOPMENT_TEAM = 7J2NLWJ2Z6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

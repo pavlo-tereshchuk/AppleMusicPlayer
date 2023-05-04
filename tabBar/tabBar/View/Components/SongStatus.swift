@@ -11,8 +11,16 @@ struct SongStatus: View {
     let spacing: CGFloat
     @Binding var status: TimeInterval
     let duration: TimeInterval
-    @State private var isPressed: Bool = false
+    
+    @State private var isPressed: Bool = false {
+        didSet {
+            if isPressed && !oldValue {
+                newStatus = Double(status/duration)
+            }
+        }
+    }
     @State private var newStatus: Double = 0
+    @State private var oldTranslation: Double = 0
     
     init(spacing: CGFloat, status: Binding<TimeInterval>, duration: TimeInterval) {
         self.spacing = spacing
@@ -25,7 +33,7 @@ struct SongStatus: View {
             let size = $0.size
             let width = size.width
             let progress = isPressed ? self.newStatus : Double(status/duration)
-
+            var tr = 0.0
             VStack(spacing: 12) {
                 ZStack(alignment: .leading) {
                     Rectangle()
@@ -54,7 +62,6 @@ struct SongStatus: View {
                 .foregroundColor(.white)
                 .foregroundStyle(.ultraThinMaterial)
                 .opacity(isPressed ? 1 : 0.2)
-                
             }
             .padding(.horizontal, isPressed ? -5 : 0)
             .padding(.top, isPressed ? 0 : 2.5)
@@ -64,13 +71,32 @@ struct SongStatus: View {
                         withAnimation(.easeInOut(duration: 0.3)) {
                             isPressed = true
                         }
-                        let x = value.location.x
-                        self.newStatus = x >= width ? self.newStatus : x/width
+                        var translation = value.translation.width
+                        var realTransl = translation - oldTranslation
+                        oldTranslation = translation
+                        if translation != 0 {
+                            realTransl = realTransl/width
+                            
+                            self.newStatus += realTransl
+                            
+                            if (self.newStatus + realTransl) < 0 {
+                                self.newStatus = 0
+                            }
+                            
+                            if (self.newStatus + realTransl) > 1 {
+                                self.newStatus = 1
+                            }
+                        }
+//                        let x = value.location.x
+//                        self.newStatus = x >= width ? self.newStatus : x/width
                     })
                     .onEnded({ value in
                         withAnimation(.easeInOut(duration: 0.3)) {
-                            self.status = self.newStatus * self.duration
+                            if oldTranslation != 0 {
+                                self.status = self.newStatus * self.duration
+                            }
                             isPressed = false
+                            oldTranslation = 0
                         }
                     }))
             }
