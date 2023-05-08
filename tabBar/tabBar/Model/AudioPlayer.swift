@@ -25,8 +25,12 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
 
     func prepareToPlay(_ song: Song) {
     do {
+        try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+        try AVAudioSession.sharedInstance().setActive(true)
         // Initialize the audio player with the song file
-        audioPlayer = try AVAudioPlayer(contentsOf: song.url)
+        audioPlayer = try AVAudioPlayer(contentsOf: song.url, fileTypeHint: AVFileType.mp3.rawValue)
+        
+        // Set our class as delegate
         audioPlayer?.delegate = self
         
         // Play the song

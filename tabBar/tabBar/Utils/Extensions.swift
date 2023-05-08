@@ -50,17 +50,17 @@ extension MPVolumeView {
         }
     }
 
-    static func getVolume() -> Float {
+    static func getVolume() -> Double {
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setActive(true)
-            let volume = audioSession.outputVolume
+            let volume = Double(audioSession.outputVolume)
             return volume
         } catch {
             print("Error setting audio session active: \(error.localizedDescription)")
             return 0.0
         }
-    }
+    }     
 }
 
 extension UIImage {
@@ -139,3 +139,4 @@ extension View {
      return 0
     }
 }
+

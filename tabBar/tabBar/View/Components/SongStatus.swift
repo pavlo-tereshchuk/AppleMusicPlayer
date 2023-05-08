@@ -33,7 +33,6 @@ struct SongStatus: View {
             let size = $0.size
             let width = size.width
             let progress = isPressed ? self.newStatus : Double(status/duration)
-            var tr = 0.0
             VStack(spacing: 12) {
                 ZStack(alignment: .leading) {
                     Rectangle()
@@ -46,6 +45,7 @@ struct SongStatus: View {
                                 .opacity(isPressed ? 1 : 0.65)
                                 .frame(height: isPressed ? 14 : 7)
                                 .scaleEffect(x: progress, anchor: .leading)
+                                .animation(.easeIn(duration: 0.2), value: progress)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
@@ -71,7 +71,7 @@ struct SongStatus: View {
                         withAnimation(.easeInOut(duration: 0.3)) {
                             isPressed = true
                         }
-                        var translation = value.translation.width
+                        let translation = value.translation.width
                         var realTransl = translation - oldTranslation
                         oldTranslation = translation
                         if translation != 0 {

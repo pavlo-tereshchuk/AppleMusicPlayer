@@ -57,7 +57,6 @@ struct ExpandedSongView: View {
     }
     @State private var offsetY: CGFloat = 0
     @State private var currentTime: TimeInterval = 0
-    @State private var currentVolume: Double = 0
 
     
     let timer = Timer.publish(every: 0.25, on: .main, in: .common)
@@ -95,14 +94,21 @@ struct ExpandedSongView: View {
                         .frame(width: 40, height: 5)
                         .opacity(animateContent ? 0.65 : 0)
                         .offset(y: animateContent ? 0 : size.height)
-                    
+
                     VStack(spacing: spacing) {
                         
                         SongImageAndHeaderShareView(size)
-                            .frame(height: minimizedImage ? 60 : size.height/2.075)
-                            .border(.white)
+                            .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
+                            .border(.red)
+                        
+//                        else {
+//                            SongsList(songs: $vm.songs, currentSong: song)
+//                                .frame(height: size.height/2)
+//                                .border(.white)
+//                        }
                         
                         PlayerView(size)
+                            .border(.white)
                     }
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
@@ -148,9 +154,7 @@ struct ExpandedSongView: View {
             }
             
             self.isPlaying = self.vm.isPlaying()
-            
-            
-            self.currentVolume = Double(vm.getVolume())
+            vm.volume = vm.getVolume()
         }
     }
     
@@ -172,10 +176,6 @@ struct ExpandedSongView: View {
                     
                 }
                 .frame(height: size.height/7)
-                .border(.white)
-            } else {
-                SongsList(songs: $vm.songs, currentSong: song)
-                    .frame(height: size.height/2)
             }
 
             //Play controls
@@ -196,11 +196,12 @@ struct ExpandedSongView: View {
                     }
                     
                     ControlButton {
-                        isPlaying.toggle()
+//                        isPlaying.toggle()
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 100 ? .largeTitle : .system(size: 40))
+                            .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
                     }
                     
                     
@@ -225,9 +226,7 @@ struct ExpandedSongView: View {
             
             VStack(spacing: spacing * 1.25) {
                 
-                VolumeStatus(spacing: 15, volume: Double(vm.getVolume())) { volume in
-                    vm.setVolume(volume)
-                }
+                VolumeStatus(spacing: 15, vm: vm)
                 
                 HStack(alignment: .top, spacing: size.width * 0.18) {
                     Button {
@@ -235,7 +234,7 @@ struct ExpandedSongView: View {
                             quoteButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton)
+                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton, toggleColor: Color(song.image!.averageColor ?? UIColor.darkGray))
                             
                     }
                     .scaleEffect(1.3)
@@ -246,14 +245,16 @@ struct ExpandedSongView: View {
                             
                         } label: {
                             Image(systemName: "airpods")
+                                .scaleEffect(1.3)
                         }
                         
                         Text("pablo 2")
+                            .fontWeight(.bold)
                             .font(.caption)
                     }
                     .foregroundStyle(.ultraThickMaterial)
                     .opacity(0.65)
-                    .scaleEffect(1.3)
+                    
                     
                     
                     Button {
@@ -261,7 +262,7 @@ struct ExpandedSongView: View {
                             listButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1)
+                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: Color(song.image!.averageColor ?? UIColor.darkGray))
                             .scaleEffect(1.3)
                     }
                 }
@@ -315,10 +316,52 @@ struct ExpandedSongView: View {
     }
     
     @ViewBuilder
-    func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0) -> some View {
+    func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
         let song = vm.songs[vm.currentSong]
+//        let spacing = size.height * 0.04
+
+        var imageFrame: CGSize {
+            minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
+        }
+        VStack {
+            HStack(spacing: 15) {
+                ZStack {
+                    Image(uiImage: song.image!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 10) : 5, style: .continuous))
+                        .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.75)
+                        .shadow(
+                            color: Color.black
+                                .opacity(minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),
+                            radius: 20,
+                            y: minimizedImage ? 0 : isPlaying ? 10 : 5)
+                        .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
+                        .matchedGeometryEffect(id: "ICON1", in: animation)
+                        .padding(.vertical, minimizedImage ? 0 : size.height > 700 ? 30 : 10)
+                }
+                .frame(width: imageFrame.width, height: imageFrame.height)
+                
+                if minimizedImage {
+                    SongHeaderAndShareView(song.title, artist: song.artist)
+                        .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
+                }
+            }
+            
+            if minimizedImage {
+                SongsList(songs: $vm.songs, currentSong: song)
+                    .frame(height: size.height/2)
+                    .border(.white)
+            }
+        }
+
+    }
+    
+    @ViewBuilder
+    func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0, toggleColor: Color) -> some View {
         Image(systemName: imageName)
-            .foregroundColor(Color(toggleButton ? song.image!.averageColor ?? UIColor.darkGray : UIColor.white))
+            .foregroundColor(toggleButton ? toggleColor : Color.white)
             .foregroundStyle(toggleButton ? Material.regularMaterial : .ultraThickMaterial)
             .opacity(toggleButton ? 1 : 0.65)
             .padding(paddingEdges, paddingLength)
@@ -332,43 +375,6 @@ struct ExpandedSongView: View {
                     .opacity(toggleButton ? 0.65 : 0)
                 
             }
-    }
-    
-    @ViewBuilder
-    func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
-        let song = vm.songs[vm.currentSong]
-        let spacing = size.height * 0.04
-
-        var imageFrame: CGSize {
-            minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
-        }
-        
-        HStack(spacing: 15) {
-            ZStack {
-                Image(uiImage: song.image!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 10) : 5, style: .continuous))
-                    .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.75)
-                    .shadow(
-                        color: Color.black
-                            .opacity(minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),
-                        radius: 20,
-                        y: minimizedImage ? 0 : isPlaying ? 10 : 5)
-                    .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
-                    .matchedGeometryEffect(id: "ICON1", in: animation)
-                    .padding(.vertical, minimizedImage ? 0 : size.height > 700 ? 30 : 10)
-            }
-            .frame(width: imageFrame.width, height: imageFrame.height)
-            
-            if minimizedImage {
-                SongHeaderAndShareView(song.title, artist: song.artist)
-                    .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
-            }
-        }
-            
-
     }
 }
 
@@ -397,7 +403,7 @@ struct ControlButton< Content: View>: View {
             completion()
                 showBackground = true
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     showBackground = false
             }
         } label: {
