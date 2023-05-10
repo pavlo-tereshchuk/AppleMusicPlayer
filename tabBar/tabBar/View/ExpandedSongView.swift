@@ -75,9 +75,10 @@ struct ExpandedSongView: View {
                     .fill(.ultraThickMaterial)
                     .overlay {
                         RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
-                            .fill(LinearGradient(colors: song.image!.getAverageColors(), startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .opacity(animateContent ? 1:0)
+                            .fill(LinearGradient(colors: song.background, startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .opacity(animateContent ? 1:0.5)
                     }
+                
                     .overlay(alignment: .top) {
                         MusicInfo(expandScheet: $expandScheet, isPlaying: $isPlaying, vm: vm, animation: animation)
                             .allowsHitTesting(false)
@@ -182,7 +183,7 @@ struct ExpandedSongView: View {
             
             GeometryReader {
                 let size = $0.size
-                                                
+
                 HStack(alignment: .center, spacing: size.width * 0.18) {
                     ControlButton {
                         if (currentTime < 5) {
@@ -194,37 +195,37 @@ struct ExpandedSongView: View {
                         Image(systemName: "backward.fill")
                             .font(size.height < 100 ? .title2 : .title)
                     }
-                    
+
                     ControlButton {
 //                        isPlaying.toggle()
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(size.height < 100 ? .largeTitle : .system(size: 40))
-                            .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
+                            .animation(.easeInOut(duration: 0.3), value: isPlaying)
                     }
-                    
-                    
-                    
+
+
+
                     ControlButton {
                         vm.playNext()
                     } content: {
                         Image(systemName: "forward.fill")
                             .font(size.height < 100 ? .title2 : .title)
                     }
-                    
+
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                
-                
+
+
+
             }
             .frame(maxHeight: .infinity)
-            
+
             //Volume + Bottom buttons
             
-            VStack(spacing: spacing * 1.25) {
+            VStack {
                 
                 VolumeStatus(spacing: 15, vm: vm)
                 
@@ -234,7 +235,7 @@ struct ExpandedSongView: View {
                             quoteButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton, toggleColor: Color(song.image!.averageColor ?? UIColor.darkGray))
+                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton, toggleColor: song.averageColor)
                             
                     }
                     .scaleEffect(1.3)
@@ -262,11 +263,12 @@ struct ExpandedSongView: View {
                             listButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: Color(song.image!.averageColor ?? UIColor.darkGray))
+                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: song.averageColor)
                             .scaleEffect(1.3)
                     }
                 }
-                .frame(alignment: .bottom)
+                .padding(.top, spacing)
+                
                 
             }
             .frame(alignment: .bottom)
@@ -349,11 +351,11 @@ struct ExpandedSongView: View {
                 }
             }
             
-            if minimizedImage {
-                SongsList(songs: $vm.songs, currentSong: song)
-                    .frame(height: size.height/2)
-                    .border(.white)
-            }
+//            if minimizedImage {
+//                SongsList(songs: $vm.songs, currentSong: song)
+//                    .frame(height: size.height/2)
+//                    .border(.white)
+//            }
         }
 
     }
@@ -415,6 +417,29 @@ struct ControlButton< Content: View>: View {
                     .opacity(showBackground ? 0.5 : 0)
                     .padding(showBackground ? -15 : -10)
                 )
+        }
+    }
+}
+
+struct RunningLine: View {
+    let text: String
+    @State private var xOffset: CGFloat = 0
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Text(text)
+                    .foregroundColor(.white)
+                Text(text)
+                    .foregroundColor(.blue)
+                    .frame(height: 2)
+                    .offset(x: xOffset)
+            }
+            .onAppear {
+                withAnimation(Animation.linear(duration: 3).repeatForever()) {
+                    xOffset = geometry.size.width
+                }
+            }
         }
     }
 }

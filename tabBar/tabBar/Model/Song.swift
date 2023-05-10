@@ -26,12 +26,16 @@ class Song: Identifiable {
             }
         }
     }
+    var averageColor = Color(UIColor.darkGray)
+    var background: [Color] = [.gray, .white]
     
     init(name: String) {
         self.fileName = name
         let filePath = Bundle.main.path(forResource: name, ofType: "mp3")
         self.url = URL(fileURLWithPath: filePath!)
         self.extractSongData()
+        self.background = self.image!.getAverageColors()
+        self.averageColor = Color(self.image!.averageColor ?? UIColor.darkGray)
         print("LYRICS: \(lyrics)")
     }
     
