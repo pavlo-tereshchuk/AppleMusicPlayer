@@ -154,7 +154,11 @@ struct ExpandedSongView: View {
             }
             
             self.isPlaying = self.vm.isPlaying()
-            vm.volume = vm.getVolume()
+            let vol = vm.getVolume()
+//            for better UX because sound changes new via levels 0.05 each
+            if abs(vm.volume - vol) >= 0.05 {
+                vm.volume = vol
+            }
         }
     }
     
