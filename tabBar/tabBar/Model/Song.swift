@@ -58,9 +58,16 @@ class Song: Identifiable {
                 self.artist = data
             }
             
+            print(asset.lyrics)
+
+            
             if i.commonKey == .id3MetadataKeyOriginalLyricist{
                 let data = i.value as! String
                 self.lyrics = data
+                print("-----")
+                print(data)
+                print(asset.lyrics)
+                print("-----")
             }
         }
     }

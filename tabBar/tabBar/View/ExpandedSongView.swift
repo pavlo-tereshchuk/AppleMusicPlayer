@@ -193,7 +193,7 @@ struct ExpandedSongView: View {
                         }
                     } content: {
                         Image(systemName: "backward.fill")
-                            .font(size.height < 100 ? .title2 : .title)
+                            .font(size.height < 90 ? .title2 : .title)
                     }
 
                     ControlButton {
@@ -201,7 +201,7 @@ struct ExpandedSongView: View {
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                            .font(size.height < 100 ? .largeTitle : .system(size: 40))
+                            .font(size.height < 90 ? .largeTitle : .system(size: 40))
                             .animation(.easeInOut(duration: 0.3), value: isPlaying)
                     }
 
@@ -211,7 +211,7 @@ struct ExpandedSongView: View {
                         vm.playNext()
                     } content: {
                         Image(systemName: "forward.fill")
-                            .font(size.height < 100 ? .title2 : .title)
+                            .font(size.height < 90 ? .title2 : .title)
                     }
 
                 }
@@ -223,6 +223,7 @@ struct ExpandedSongView: View {
 
             }
             .frame(maxHeight: .infinity)
+            .padding(.bottom, 10)
 
             //Volume + Bottom buttons
             
