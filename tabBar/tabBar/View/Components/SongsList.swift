@@ -83,7 +83,7 @@ struct SongsList: View {
                                 shuffleButton.toggle()
                             }
                         } label: {
-                            customButtonLabel(imageName: "shuffle", toggleButton: shuffleButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: Color(currentSong.image!.averageColor ?? UIColor.darkGray))
+                            customButtonLabel(imageName: "shuffle", toggleButton: shuffleButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
                                 .scaleEffect(1.3)
                             
                         }
@@ -93,7 +93,7 @@ struct SongsList: View {
                                 repeatButton.toggle()
                             }
                         } label: {
-                            customButtonLabel(imageName: "repeat", toggleButton: repeatButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: Color(currentSong.image!.averageColor ?? UIColor.darkGray))
+                            customButtonLabel(imageName: "repeat", toggleButton: repeatButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
                                 .scaleEffect(1.3)
                         }
                         
@@ -102,7 +102,7 @@ struct SongsList: View {
                                 infinityButton.toggle()
                             }
                         } label: {
-                            customButtonLabel(imageName: "infinity", toggleButton: infinityButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: Color(currentSong.image!.averageColor ?? UIColor.darkGray))
+                            customButtonLabel(imageName: "infinity", toggleButton: infinityButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
                                 .scaleEffect(1.3)
                         }
                     }

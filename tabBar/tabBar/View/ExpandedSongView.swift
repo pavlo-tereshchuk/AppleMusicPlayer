@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MediaPlayer
 
 
 struct ExpandedSongView: View {
@@ -57,6 +58,7 @@ struct ExpandedSongView: View {
     }
     @State private var offsetY: CGFloat = 0
     @State private var currentTime: TimeInterval = 0
+    @State private var hiddenSystemVolumeSlider: UISlider!
 
     
     let timer = Timer.publish(every: 0.25, on: .main, in: .common)
@@ -70,7 +72,6 @@ struct ExpandedSongView: View {
             let song = vm.songs[vm.currentSong]
             
             ZStack {
-                
                 RoundedRectangle(cornerRadius: animateContent ? deviceCornerRadius : 0, style: .continuous)
                     .fill(.ultraThickMaterial)
                     .overlay {
@@ -100,7 +101,6 @@ struct ExpandedSongView: View {
                         
                         SongImageAndHeaderShareView(size)
                             .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
-                            .border(.red)
                         
 //                        else {
 //                            SongsList(songs: $vm.songs, currentSong: song)
@@ -109,7 +109,6 @@ struct ExpandedSongView: View {
 //                        }
                         
                         PlayerView(size)
-                            .border(.white)
                     }
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
@@ -143,7 +142,7 @@ struct ExpandedSongView: View {
         .onAppear {
             withAnimation(.easeInOut(duration: 0.35)) {
                 animateContent = true
-                isPlaying = vm.isPlaying()
+                vm.setVolume(vm.getVolume())
             }
         }
         .onReceive(timer) { _ in
@@ -178,6 +177,7 @@ struct ExpandedSongView: View {
                 }
                 .frame(height: size.height/7)
             }
+            
 
             //Play controls
             
@@ -217,6 +217,7 @@ struct ExpandedSongView: View {
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.bottom, 10)
 
 
 
@@ -227,7 +228,7 @@ struct ExpandedSongView: View {
             
             VStack {
                 
-                VolumeStatus(spacing: 15, vm: vm)
+                VolumeStatus(spacing: 15, volume: $vm.volume.onChange({vm.setVolume($0)}))
                 
                 HStack(alignment: .top, spacing: size.width * 0.18) {
                     Button {
@@ -351,11 +352,11 @@ struct ExpandedSongView: View {
                 }
             }
             
-//            if minimizedImage {
-//                SongsList(songs: $vm.songs, currentSong: song)
-//                    .frame(height: size.height/2)
-//                    .border(.white)
-//            }
+            if minimizedImage {
+                SongsList(songs: $vm.songs, currentSong: song)
+                    .frame(height: size.height/2)
+                    .border(.white)
+            }
         }
 
     }

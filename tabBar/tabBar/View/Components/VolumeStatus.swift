@@ -6,16 +6,24 @@
 //
 
 import SwiftUI
+import MediaPlayer
 
 struct VolumeStatus: View {
     let spacing: CGFloat
-    @ObservedObject var vm: HomeViewModel
-    @State private var isPressed: Bool = false
-    @State private var oldTranslation: Double = 0
+    @Binding var volume: Float
+    @State private var isPressed: Bool = false {
+        didSet {
+            if isPressed && !oldValue {
+                newVolume = volume
+            }
+        }
+    }
+    @State private var oldTranslation: Float = 0
+    @State private var newVolume: Float = 0
     
-    init(spacing: CGFloat, vm: HomeViewModel) {
+    init(spacing: CGFloat, volume: Binding<Float>) {
         self.spacing = spacing
-        self.vm = vm
+        self._volume = volume
     }
     
     var body: some View {
@@ -28,6 +36,7 @@ struct VolumeStatus: View {
             GeometryReader {
                 let size = $0.size
                 let width = size.width
+                let vol = isPressed ? self.newVolume : volume
 
                 ZStack(alignment: .leading) {
                     Rectangle()
@@ -39,11 +48,10 @@ struct VolumeStatus: View {
                                 .fill(.white)
                                 .opacity(isPressed ? 1 : 0.65)
                                 .frame(height: isPressed ? 14 : 7)
-                                .scaleEffect(x: vm.volume, anchor: .leading)
-                                .animation(.easeIn(duration: 0.2), value: vm.volume)
+                                .scaleEffect(x: CGFloat(vol), anchor: .leading)
+                                .animation(.easeIn(duration: 0.2), value: vol)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    
                 }
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
@@ -51,26 +59,32 @@ struct VolumeStatus: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 isPressed = true
                             }
-                            let translation = value.translation.width
+                            let translation = Float(value.translation.width)
                             var realTransl = translation - oldTranslation
                             oldTranslation = translation
                             if translation != 0 {
-                                realTransl = realTransl/width
+                                realTransl = realTransl/Float(width)
                                 
-                                self.vm.volume += realTransl
+                                self.newVolume += realTransl
                                 
-                                if (self.vm.volume + realTransl) < 0 {
-                                    self.vm.volume = 0
+                                if (self.newVolume + realTransl) < 0 {
+                                    self.newVolume = 0
                                 }
                                 
-                                if (self.vm.volume + realTransl) > 1 {
-                                    self.vm.volume = 1
+                                if (self.newVolume + realTransl) > 1 {
+                                    self.newVolume = 1
                                 }
                             }
                         })
                         .onEnded({ value in
                             withAnimation(.easeInOut(duration: 0.3)) {
+                                if let view = MPVolumeView().subviews.first as? UISlider
+                                {
+                                     view.value = newVolume
+                                }
+                                volume = newVolume
                                 isPressed = false
+                                
                             }
                         }))
             }
@@ -88,8 +102,10 @@ struct VolumeStatus: View {
 }
 
 struct VolumeStatus_Previews: PreviewProvider {
+    @State static var volume: Float = 0.1
+    
     static var previews: some View {
-        VolumeStatus(spacing: 10, vm: HomeViewModel())
+        VolumeStatus(spacing: 10, volume: $volume)
             .preferredColorScheme(.dark)
     }
 }

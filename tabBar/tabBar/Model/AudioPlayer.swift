@@ -91,4 +91,8 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         self.finished = true
         
     }
+    
+    func setVolume(_ volume: Float, fadeDuration: TimeInterval) {
+        audioPlayer?.setVolume(volume, fadeDuration: fadeDuration)
+    }
 }

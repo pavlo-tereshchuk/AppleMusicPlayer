@@ -36,28 +36,25 @@ extension Binding {
 
 //Update system volume
 extension MPVolumeView {
-    
-    static func setVolume(_ volume: Float) {
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setActive(true)
-            let volumeView = MPVolumeView()
-            if let slider = volumeView.subviews.first as? UISlider {
-                slider.value = volume
-            }
-        } catch {
-            print("Error setting audio session active: \(error.localizedDescription)")
+
+    static func setVolume(_ volume: Float) -> Void {
+        let volumeView = MPVolumeView()
+        let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+            slider?.value = volume
         }
     }
-
-    static func getVolume() -> Double {
+    
+    
+    static func getVolume() -> Float {
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setActive(true)
-            let volume = Double(audioSession.outputVolume)
+            let volume = audioSession.outputVolume
             return volume
         } catch {
-            print("Error setting audio session active: \(error.localizedDescription)")
+            print("Error getting audio session active: \(error.localizedDescription)")
             return 0.0
         }
     }     

@@ -34,6 +34,7 @@
 		C56CEA7229D3366900205820 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C56CEA7529D3366900205820 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C56CEA7D29D33FD900205820 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		C5CE1E392A0BE4C300ABEF9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5E1FD4A29E08B8100F0AF09 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		C5E1FD4C29E6EC7200F0AF09 /* Juice Jones.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Juice Jones.mp3"; sourceTree = "<group>"; };
 		C5E1FD4F29E84A2700F0AF09 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -77,6 +78,7 @@
 		C56CEA6D29D3366200205820 /* tabBar */ = {
 			isa = PBXGroup;
 			children = (
+				C5CE1E392A0BE4C300ABEF9A /* Info.plist */,
 				C5E1FD5129E84C3600F0AF09 /* Songs */,
 				C56CEA6E29D3366200205820 /* tabBarApp.swift */,
 				C56CEA7029D3366200205820 /* ContentView.swift */,
@@ -370,6 +372,7 @@
 				DEVELOPMENT_TEAM = 7J2NLWJ2Z6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tabBar/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -399,6 +402,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"tabBar/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = tabBar/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -13,7 +13,7 @@ class HomeViewModel: ObservableObject {
     @Published var songs: [Song] = [Song(name: "")]
     @Published var isLoaded = false
     @Published var currentSong = 0
-    @Published var volume: Double = 0
+    @Published var volume: Float = 0
     
     //    Drop down menu buttons
     let dropDownMenuItems = [
@@ -37,10 +37,10 @@ class HomeViewModel: ObservableObject {
         self.isLoaded = self.getSongsList()
         self.prepareToPlay(getCurrentSong())
         self.volume = getVolume()
-        subscribeForVolumeChange()
     }
     
 //    MARK: Player controls
+    
     func playNext() {
         let nextSong = {
             if self.currentSong + 1 < self.songs.count {
@@ -144,33 +144,11 @@ class HomeViewModel: ObservableObject {
     
 //    MARK: Volume
     
-    func getVolume() -> Double {
+    func getVolume() -> Float {
         return MPVolumeView.getVolume()
     }
     
     func setVolume(_ volume: Float) {
         MPVolumeView.setVolume(volume)
     }
-    
-    func subscribeForVolumeChange() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(volumeDidChange(_:)),
-            name: NSNotification.Name(rawValue: "AVSystemController_SystemVolumeDidChangeNotification"),
-            object: nil)
-    }
-    
-    @objc func volumeDidChange(_ notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-        let volumeChangeType = userInfo["AVSystemController_AudioVolumeChangeReasonNotificationParameter"] as? String,
-        let volume = notification.userInfo!["AVSystemController_AudioVolumeNotificationParameter"] as? NSNumber else {
-            return
-        }
-        
-        if volumeChangeType == "ExplicitVolumeChange" {
-            print("CHANGED")
-            self.volume = volume.doubleValue
-        }
-    }
-    
 }
