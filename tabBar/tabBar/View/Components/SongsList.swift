@@ -51,8 +51,8 @@ struct SongsList: View {
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                 }
-                .padding(.top, 30)
-                .listStyle(InsetGroupedListStyle())
+                .padding(.top, 60)
+                .listStyle(PlainListStyle())
                 .environment(\.editMode, .constant(.active))
                 .scrollIndicators(.hidden)
                 .scrollContentBackground(.hidden)
@@ -106,7 +106,7 @@ struct SongsList: View {
                                 .scaleEffect(1.3)
                         }
                     }
-                    .padding()
+                    .padding(.vertical)
                 }
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)

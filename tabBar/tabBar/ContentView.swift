@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var vm = HomeViewModel()
+    @StateObject var vm = HomeViewModel(audioPlayer: AudioPlayer.getInstance())
 
     var body: some View {
         HomeView(vm: vm)
@@ -18,6 +18,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     
     static var previews: some View {
-        ContentView(vm: HomeViewModel())
+        ContentView(vm: HomeViewModel(audioPlayer: AudioPlayer.getInstance()))
     }
 }

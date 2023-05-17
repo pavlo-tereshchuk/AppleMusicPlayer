@@ -31,9 +31,10 @@ class HomeViewModel: ObservableObject {
     ]
     
     
-    let audioPlayer = AudioPlayer.getInstance()
+    let audioPlayer: AudioPlayer
     
-    init() {
+    init(audioPlayer: AudioPlayer) {
+        self.audioPlayer = audioPlayer
         self.isLoaded = self.getSongsList()
         self.prepareToPlay(getCurrentSong())
         self.volume = getVolume()

@@ -17,6 +17,7 @@ struct ExpandedSongView: View {
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
     @State private var minimizedImage: Bool = false
+    @State private var scrollUpLyrics: Bool = false
 //    States for bottom buttons
     @State private var quoteButton: Bool = false {
         didSet {
@@ -101,13 +102,7 @@ struct ExpandedSongView: View {
                         
                         SongImageAndHeaderShareView(size)
                             .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
-                        
-//                        else {
-//                            SongsList(songs: $vm.songs, currentSong: song)
-//                                .frame(height: size.height/2)
-//                                .border(.white)
-//                        }
-                        
+                    
                         PlayerView(size)
                     }
                 }
@@ -167,9 +162,6 @@ struct ExpandedSongView: View {
         let song = vm.songs[vm.currentSong]
         let spacing = size.height * 0.04
         VStack {
-            
-            
-            
             if (!minimizedImage) {
                 VStack(spacing: 20) {
                     SongHeaderAndShareView(song.title, artist: song.artist)
@@ -357,11 +349,16 @@ struct ExpandedSongView: View {
                 }
             }
             
-            if minimizedImage {
+            if listButton {
                 SongsList(songs: $vm.songs, currentSong: song)
                     .frame(height: size.height/2)
-                    .border(.white)
             }
+            
+            if quoteButton {
+                LyricsView(lyrics: song.lyrics, scrollUp: $scrollUpLyrics)
+                    .frame(height: size.height/2)
+            }
+            
         }
 
     }

@@ -17,7 +17,7 @@ class Song: Identifiable {
     var title: String = ""
     var artist: String = ""
     var duration: Double = 0
-    var lyrics: String = ""
+    var lyrics: String?
     var url: URL
     var image: UIImage? = UIImage(named: "placeholder")! {
         didSet {
@@ -36,7 +36,6 @@ class Song: Identifiable {
         self.extractSongData()
         self.background = self.image!.getAverageColors()
         self.averageColor = Color(self.image!.averageColor ?? UIColor.darkGray)
-        print("LYRICS: \(lyrics)")
     }
     
     func extractSongData(){
@@ -58,17 +57,8 @@ class Song: Identifiable {
                 self.artist = data
             }
             
-            print(asset.lyrics)
-
+            self.lyrics = asset.lyrics
             
-            if i.commonKey == .id3MetadataKeyOriginalLyricist{
-                let data = i.value as! String
-                self.lyrics = data
-                print("-----")
-                print(data)
-                print(asset.lyrics)
-                print("-----")
-            }
         }
     }
     
