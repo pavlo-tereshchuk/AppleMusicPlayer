@@ -11,8 +11,14 @@ import MediaPlayer
 
 class HomeViewModel: ObservableObject {
     @Published var songs: [Song] = [Song(name: "")]
+    @Published var nextSongs: [Song] = []
+    @Published var prevSongs: [Song] = []
     @Published var isLoaded = false
-    @Published var currentSong = 0
+    @Published var currentSong = 0 {
+        didSet {
+            getNextPrevFromSongs()
+        }
+    }
     @Published var volume: Float = 0
     
     //    Drop down menu buttons
@@ -38,6 +44,7 @@ class HomeViewModel: ObservableObject {
         self.isLoaded = self.getSongsList()
         self.prepareToPlay(getCurrentSong())
         self.volume = getVolume()
+        self.nextSongs = Array(songs.suffix(from: currentSong + 1))
     }
     
 //    MARK: Player controls
@@ -47,18 +54,13 @@ class HomeViewModel: ObservableObject {
             if self.currentSong + 1 < self.songs.count {
                 self.currentSong += 1
                 self.prepareToPlay(self.getCurrentSong())
-
-                if self.isFinished() {
-                    self.play()
-                }
             }
         }
         
-        if isPlaying() {
-            nextSong()
+        
+        nextSong()
+        if isPlaying() || isFinished() {
             play()
-        } else {
-            nextSong()
         }
     }
     
@@ -70,11 +72,9 @@ class HomeViewModel: ObservableObject {
             }
         }
         
+        prevSong()
         if isPlaying() {
-            prevSong()
             play()
-        } else {
-            prevSong()
         }
     }
 
@@ -152,4 +152,13 @@ class HomeViewModel: ObservableObject {
     func setVolume(_ volume: Float) {
         MPVolumeView.setVolume(volume)
     }
+    
+//    MARK: Mutating Songs Array
+    
+    func getNextPrevFromSongs() {
+        nextSongs = currentSong < songs.count ? Array(songs.suffix(from: currentSong + 1)) : []
+        prevSongs = currentSong > 0 ? Array(songs.prefix(upTo: currentSong - 1)) : []
+    }
+    
+    
 }

@@ -8,90 +8,56 @@
 import SwiftUI
 
 struct SongsList: View {
-    @Binding var songs: [Song]
-    var currentSong: Song
-    private var prevSongs: [Song] = []
+    @ObservedObject var vm: HomeViewModel
     @State private var pressedRowID = UUID()
     @State private var shuffleButton = false
     @State private var repeatButton = false
     @State private var infinityButton = false
     
-    
-    init(songs: Binding<[Song]>, currentSong: Song) {
-        self._songs = songs
-        self.currentSong = currentSong
-//        let currIndex = songs.firstIndex(where: {$0.id == currentSong.id})
-//        
-//        if let currIndex  = currIndex {
-//            self.nextSongs = Array( songs.wrappedValue.suffix(from: currIndex + 1))
-//        } else {
-//            self.nextSongs = songs.wrappedValue
-//        }
-    }
-    
     var body: some View {
-            ZStack(alignment: .top) {
-                List {
-                    Section(header:
-                        sectionHistory()
-                    ) {
-                        ForEach(songs) { song in
-                            SongRow(song: song)
-                                .frame(maxWidth: .infinity)
-                                .listRowInsets(EdgeInsets())
-                                .padding(.bottom, 10)
-                                .background(.clear)
+        ZStack(alignment: .top) {
+            sectionQueue()
+            if !vm.nextSongs.isEmpty {
+            List {
+                ForEach(vm.nextSongs) { song in
+                    SongRow(song: song)
+                        .frame(maxWidth: .infinity)
+                        .listRowInsets(EdgeInsets())
+                        .padding(.bottom, 10)
+                        .background(.clear)
+                        .onTapGesture {
+                            print("TAP")
                         }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                    }
-
-                    Section {
-                        SongRow(song: currentSong)
-                            .frame(maxWidth: .infinity)
-                            .listRowInsets(EdgeInsets())
-                            .padding(.bottom, 10)
-                            .background(.clear)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                    }
-
-                    Section(header: sectionQueue()) {
-                        ForEach(songs) { song in
-                            SongRow(song: song)
-                                .frame(maxWidth: .infinity)
-                                .listRowInsets(EdgeInsets())
-                                .padding(.bottom, 10)
-                                .background(.clear)
-                                .onTapGesture {
-                                    print("TAP")
-                                }
-                                .onLongPressGesture(minimumDuration: 1) {
-                                    self.pressedRowID = song.id
-                                    print("Long")
-                                }
-
+                        .onLongPressGesture(minimumDuration: 1) {
+                            self.pressedRowID = song.id
+                            print("Long")
                         }
-                        .onMove(perform: moveRow)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                    }
-                }
-                .padding(.horizontal, 5)
-                .listStyle(PlainListStyle())
-                .environment(\.editMode, .constant(.active))
-                .scrollIndicators(.hidden)
-                .scrollContentBackground(.hidden)
-                .onAppear {
-                    UIScrollView.appearance().bounces = false
-                }
-                .onDisappear {
-                    UIScrollView.appearance().bounces = true
-                }
 
-
-
+                }
+                .onMove(perform: moveRow)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
+            .padding(.top, 60)
+            .padding(.horizontal, 5)
+            .listStyle(PlainListStyle())
+            .environment(\.editMode, .constant(.active))
+            .scrollIndicators(.hidden)
+            .scrollContentBackground(.hidden)
+            .foregroundColor(.clear)
+            .onAppear {
+                UIScrollView.appearance().bounces = false
+            }
+            .onDisappear {
+                UIScrollView.appearance().bounces = true
+            }
+        } else {
+                Rectangle()
+                    .fill(.clear)
+            }
+    }
+//        in order to not trigger the ExpandedView gesture for folding
+            .gesture(DragGesture(coordinateSpace: .global))
     }
     
 //    var body: some View {
@@ -182,6 +148,7 @@ struct SongsList: View {
     
     @ViewBuilder
     func sectionQueue() -> some View {
+        let avgColor = vm.getCurrentSong().averageColor
         HStack(spacing: 15) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("In queue")
@@ -202,7 +169,7 @@ struct SongsList: View {
                         shuffleButton.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "shuffle", toggleButton: shuffleButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
+                    customButtonLabel(imageName: "shuffle", toggleButton: shuffleButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
 
                 }
@@ -212,7 +179,7 @@ struct SongsList: View {
                         repeatButton.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "repeat", toggleButton: repeatButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
+                    customButtonLabel(imageName: "repeat", toggleButton: repeatButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
                 }
 
@@ -221,7 +188,7 @@ struct SongsList: View {
                         infinityButton.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "infinity", toggleButton: infinityButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: currentSong.averageColor)
+                    customButtonLabel(imageName: "infinity", toggleButton: infinityButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
                 }
             }
@@ -234,18 +201,18 @@ struct SongsList: View {
     }
     
     private func moveRow(source: IndexSet, destination: Int){
-        songs.move(fromOffsets: source, toOffset: destination)
+        let offset = vm.currentSong + 1
+        var newSource = IndexSet()
+        source.forEach { value in
+            newSource.insert(value + offset)
+        }
+        vm.songs.move(fromOffsets: newSource, toOffset: destination + offset)
+        vm.getNextPrevFromSongs()
     }
 }
 
 struct SongsList_Previews: PreviewProvider {
     
-    static let curSong = Song(name: "Juice Jones")
-    @State static var songs = [Song(name: "Mermaids"), curSong,
-                               Song(name: "Daft_Punk_GLBTM"), Song(name: "Mermaids"), curSong,
-                               Song(name: "Daft_Punk_GLBTM"), Song(name: "Mermaids"), curSong,
-                               Song(name: "Daft_Punk_GLBTM")]
-
     static var previews: some View {
         ZStack {
             
@@ -256,7 +223,7 @@ struct SongsList_Previews: PreviewProvider {
                         .fill(LinearGradient(colors: [.green, .blue, .gray], startPoint: .top, endPoint: .bottomTrailing))
                 }
                 .overlay(alignment: .top) {
-                    SongsList(songs: $songs, currentSong: curSong)
+                    SongsList(vm: HomeViewModel(audioPlayer: AudioPlayer.getInstance()))
                     .frame(height: 400)
                     .border(.black)
 //                    .mask(LinearGradient(gradient: Gradient(colors: [.blue, .clear]), startPoint: .top, endPoint: .bottom))

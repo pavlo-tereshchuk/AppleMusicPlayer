@@ -98,13 +98,12 @@ struct ExpandedSongView: View {
                         .opacity(animateContent ? 0.65 : 0)
                         .offset(y: animateContent ? 0 : size.height)
 
-                    VStack(spacing: spacing) {
                         
-                        SongImageAndHeaderShareView(size)
-                            .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
+                    SongImageAndHeaderShareView(size)
+                        .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
                     
-                        PlayerView(size)
-                    }
+                    PlayerView(size)
+                    
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
                 .padding(.bottom, safeArea.bottom == 0 ? 10 : safeArea.bottom)
@@ -350,7 +349,7 @@ struct ExpandedSongView: View {
             }
             
             if listButton {
-                SongsList(songs: $vm.songs, currentSong: song)
+                SongsList(vm: vm)
                     .frame(height: size.height/2)
             }
             

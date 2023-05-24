@@ -87,8 +87,6 @@ struct SongStatus: View {
                                 self.newStatus = 1
                             }
                         }
-//                        let x = value.location.x
-//                        self.newStatus = x >= width ? self.newStatus : x/width
                     })
                     .onEnded({ value in
                         withAnimation(.easeInOut(duration: 0.3)) {
