@@ -21,6 +21,10 @@ class HomeViewModel: ObservableObject {
     }
     @Published var volume: Float = 0
     
+    @Published var shuffleSongs = false
+    @Published var repeatSongs = false
+    @Published var infinitySongs = false
+    
     //    Drop down menu buttons
     let dropDownMenuItems = [
         "Add to Library" : "plus",
@@ -49,18 +53,57 @@ class HomeViewModel: ObservableObject {
     
 //    MARK: Player controls
     
-    func playNext() {
+    func playSong(song: Song) {
         let nextSong = {
-            if self.currentSong + 1 < self.songs.count {
-                self.currentSong += 1
+            
+            if let songNum = self.songs.firstIndex(where: {$0.id == song.id}) {
+                self.currentSong = songNum
                 self.prepareToPlay(self.getCurrentSong())
             }
         }
         
-        
-        nextSong()
-        if isPlaying() || isFinished() {
+        if isPlaying() {
+            nextSong()
             play()
+        } else {
+            nextSong()
+        }
+    }
+    
+    func playNext() {
+        let nextSong = {
+//          normal song change
+            if !self.lastSong() {
+                self.currentSong += 1
+                self.prepareToPlay(self.getCurrentSong())
+            } else
+//          when a song is last in queue and infinity mode is turned on
+            if self.lastSong() && self.infinitySongs {
+                self.currentSong = 0
+                self.prepareToPlay(self.getCurrentSong())
+            } else
+//          last song and no infinity mode
+            if self.lastSong() && !self.infinitySongs {
+                print(self.isFinished())
+                if self.isFinished() {
+                    self.play()
+                    self.setCurrentTime(.zero)
+                    self.pause()
+                }
+                return
+            }
+            
+            if self.isFinished() {
+                self.play()
+            }
+        }
+        
+        
+        if isPlaying() {
+            nextSong()
+            play()
+        } else {
+            nextSong()
         }
     }
     
@@ -70,11 +113,17 @@ class HomeViewModel: ObservableObject {
                 self.currentSong -= 1
                 self.prepareToPlay(self.getCurrentSong())
             }
+            
+            
         }
         
-        prevSong()
+        print(currentSong)
+        
         if isPlaying() {
+            prevSong()
             play()
+        } else {
+            prevSong()
         }
     }
 
@@ -141,6 +190,10 @@ class HomeViewModel: ObservableObject {
      
     func getDuration() -> TimeInterval {
         return audioPlayer.getDuration()
+    }
+    
+    func lastSong() -> Bool {
+        return currentSong + 1 == songs.count
     }
     
 //    MARK: Volume

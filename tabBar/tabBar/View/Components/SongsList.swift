@@ -10,23 +10,21 @@ import SwiftUI
 struct SongsList: View {
     @ObservedObject var vm: HomeViewModel
     @State private var pressedRowID = UUID()
-    @State private var shuffleButton = false
-    @State private var repeatButton = false
-    @State private var infinityButton = false
     
     var body: some View {
         ZStack(alignment: .top) {
             sectionQueue()
+                .padding(.horizontal, 25)
             if !vm.nextSongs.isEmpty {
             List {
                 ForEach(vm.nextSongs) { song in
                     SongRow(song: song)
                         .frame(maxWidth: .infinity)
                         .listRowInsets(EdgeInsets())
-                        .padding(.bottom, 10)
+                        .padding(.horizontal, 25)
                         .background(.clear)
                         .onTapGesture {
-                            print("TAP")
+                            vm.playSong(song: song)
                         }
                         .onLongPressGesture(minimumDuration: 1) {
                             self.pressedRowID = song.id
@@ -42,7 +40,7 @@ struct SongsList: View {
             .padding(.horizontal, 5)
             .listStyle(PlainListStyle())
             .environment(\.editMode, .constant(.active))
-            .scrollIndicators(.hidden)
+//            .scrollIndicators(.hidden)
             .scrollContentBackground(.hidden)
             .foregroundColor(.clear)
             .onAppear {
@@ -166,29 +164,29 @@ struct SongsList: View {
             HStack(spacing: 15) {
                 Button {
                     withAnimation(.easeInOut(duration: 0.05)) {
-                        shuffleButton.toggle()
+                        vm.shuffleSongs.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "shuffle", toggleButton: shuffleButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
+                    customButtonLabel(imageName: "shuffle", toggleButton: vm.shuffleSongs, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
 
                 }
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.05)) {
-                        repeatButton.toggle()
+                        vm.repeatSongs.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "repeat", toggleButton: repeatButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
+                    customButtonLabel(imageName: "repeat", toggleButton: vm.repeatSongs, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
                 }
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.05)) {
-                        infinityButton.toggle()
+                        vm.infinitySongs.toggle()
                     }
                 } label: {
-                    customButtonLabel(imageName: "infinity", toggleButton: infinityButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
+                    customButtonLabel(imageName: "infinity", toggleButton: vm.infinitySongs, paddingEdges: .vertical, paddingLength: 1, toggleColor: avgColor)
                         .scaleEffect(1.3)
                 }
             }
@@ -226,7 +224,10 @@ struct SongsList_Previews: PreviewProvider {
                     SongsList(vm: HomeViewModel(audioPlayer: AudioPlayer.getInstance()))
                     .frame(height: 400)
                     .border(.black)
-//                    .mask(LinearGradient(gradient: Gradient(colors: [.blue, .clear]), startPoint: .top, endPoint: .bottom))
+//                    .mask(
+//                        LinearGradient(gradient: Gradient(colors: [Color.black, Color.black.opacity(0)]), startPoint: .top, endPoint: .bottom)
+//                    )
+//                    .mask(LinearGradient(gradient: Gradient(colors: [Color.black, Color.clear, Color.clear, Color.clear]), startPoint: .top, endPoint: .bottom))
                     .padding(.top, 30)
                 }
         }

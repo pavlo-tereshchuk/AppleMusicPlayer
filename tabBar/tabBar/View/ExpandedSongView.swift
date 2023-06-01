@@ -101,13 +101,15 @@ struct ExpandedSongView: View {
                         
                     SongImageAndHeaderShareView(size)
                         .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
+                        
                     
                     PlayerView(size)
+                        .padding(.horizontal, 25)
                     
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
                 .padding(.bottom, safeArea.bottom == 0 ? 10 : safeArea.bottom)
-                .padding(.horizontal, 25)
+//                .padding(.horizontal, 25)
                 .clipped()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
@@ -141,13 +143,14 @@ struct ExpandedSongView: View {
         }
         .onReceive(timer) { _ in
             self.isFinished = vm.isFinished()
+            self.isPlaying = self.vm.isPlaying()
+            
             if !isFinished {
                 self.currentTime = vm.getCurrentTime() ?? self.currentTime
             } else {
                 self.vm.playNext()
             }
             
-            self.isPlaying = self.vm.isPlaying()
             let vol = vm.getVolume()
 //            for better UX because sound changes new via levels 0.05 each
             if abs(vm.volume - vol) >= 0.05 {
@@ -192,7 +195,6 @@ struct ExpandedSongView: View {
                     }
 
                     ControlButton {
-//                        isPlaying.toggle()
                         vm.pause_play()
                     } content: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
@@ -347,6 +349,8 @@ struct ExpandedSongView: View {
                         .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                 }
             }
+            .padding(.horizontal, 25)
+
             
             if listButton {
                 SongsList(vm: vm)

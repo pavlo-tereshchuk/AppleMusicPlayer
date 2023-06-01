@@ -12,6 +12,9 @@ struct ContentView: View {
 
     var body: some View {
         HomeView(vm: vm)
+            .onAppear {
+                UIButton.appearance().tintColor = .red
+            }
     }
 }
 

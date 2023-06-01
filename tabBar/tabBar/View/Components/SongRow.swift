@@ -46,8 +46,10 @@ struct SongRow_Previews: PreviewProvider {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .fill(LinearGradient(colors: [.white, .blue, .gray], startPoint: .top, endPoint: .bottomTrailing))
                 }
-            SongRow(song: Song(name: "Mermaids"))
-                .preferredColorScheme(.dark)
+            List {
+                SongRow(song: Song(name: "Mermaids"))
+                    .preferredColorScheme(.dark)
+            }
         }
     }
 }
