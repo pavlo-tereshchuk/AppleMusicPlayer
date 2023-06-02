@@ -330,6 +330,7 @@ struct ExpandedSongView: View {
             if vm.quoteButton {
                 LyricsView(lyrics: song.lyrics)
                     .frame(height: size.height/2)
+                    .padding(.horizontal, 25)
             }
             
         }

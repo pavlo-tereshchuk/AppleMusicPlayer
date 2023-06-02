@@ -22,16 +22,7 @@ struct LyricsView: View {
             .scrollIndicators(.hidden)
 //        in order to not trigger the ExpandedView gesture for folding
             .gesture(DragGesture(coordinateSpace: .global))
-//            .simultaneousGesture(
-//                   DragGesture()
-//                    .onChanged({
-//                        if $0.predictedEndLocation.y > $0.location.y {
-//                            scrollUp = false
-//                        } else {
-//                            scrollUp = true
-//                        }
-//                       
-//                   }))
+
         } else {
             Text("no lyrics available")
                 .foregroundStyle(.ultraThickMaterial)
