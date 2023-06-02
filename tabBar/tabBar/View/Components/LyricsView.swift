@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LyricsView: View {
     var lyrics: String?
-    @Binding var scrollUp: Bool
+//    @Binding var scrollUp: Bool
     
     var body: some View {
         if let lyrics = lyrics {
@@ -20,16 +20,18 @@ struct LyricsView: View {
                     .opacity(0.65)
             }
             .scrollIndicators(.hidden)
-            .simultaneousGesture(
-                   DragGesture()
-                    .onChanged({
-                        if $0.predictedEndLocation.y > $0.location.y {
-                            scrollUp = false
-                        } else {
-                            scrollUp = true
-                        }
-                       
-                   }))
+//        in order to not trigger the ExpandedView gesture for folding
+            .gesture(DragGesture(coordinateSpace: .global))
+//            .simultaneousGesture(
+//                   DragGesture()
+//                    .onChanged({
+//                        if $0.predictedEndLocation.y > $0.location.y {
+//                            scrollUp = false
+//                        } else {
+//                            scrollUp = true
+//                        }
+//                       
+//                   }))
         } else {
             Text("no lyrics available")
                 .foregroundStyle(.ultraThickMaterial)
@@ -39,9 +41,9 @@ struct LyricsView: View {
 }
 
 struct LyricsView_Previews: PreviewProvider {
-    @State static var scrollUp = false
+//    @State static var scrollUp = false
     static var previews: some View {
-        LyricsView(lyrics: Song(name: "02 Champion").lyrics, scrollUp: $scrollUp)
+        LyricsView(lyrics: Song(name: "02 Champion").lyrics)
             .preferredColorScheme(.dark)
     }
 }

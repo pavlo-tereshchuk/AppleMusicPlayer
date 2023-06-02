@@ -16,49 +16,9 @@ struct ExpandedSongView: View {
     @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
-    @State private var minimizedImage: Bool = false
-    @State private var scrollUpLyrics: Bool = false
-//    States for bottom buttons
-    @State private var quoteButton: Bool = false {
-        didSet {
-            if quoteButton && listButton {
-                listButton = false
-            }
-            
-            if !quoteButton && !listButton {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    minimizedImage = false
-                }
-            }
-            
-            if quoteButton && !listButton {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    minimizedImage = true
-                }
-            }
-        }
-    }
-    @State private var listButton: Bool = false {
-        didSet {
-            if quoteButton && listButton {
-                quoteButton = false
-            }
-            
-            if !quoteButton && !listButton {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    minimizedImage = false
-                }
-            }
-            
-            if !quoteButton && listButton {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    minimizedImage = true
-                }
-            }
-        }
-    }
+    
     @State private var offsetY: CGFloat = 0
-    @State private var currentTime: TimeInterval = 0
+    
     @State private var hiddenSystemVolumeSlider: UISlider!
 
     
@@ -100,7 +60,8 @@ struct ExpandedSongView: View {
 
                         
                     SongImageAndHeaderShareView(size)
-                        .frame(height: minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
+                        .frame(height: vm.minimizedImage ? (size.height/2.03 + size.height/7) : size.height/2.075)
+                        .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
                         
                     
                     PlayerView(size)
@@ -146,7 +107,7 @@ struct ExpandedSongView: View {
             self.isPlaying = self.vm.isPlaying()
             
             if !isFinished {
-                self.currentTime = vm.getCurrentTime() ?? self.currentTime
+                vm.currentTime = vm.getCurrentTime() ?? vm.currentTime
             } else {
                 self.vm.playNext()
             }
@@ -164,17 +125,21 @@ struct ExpandedSongView: View {
         let song = vm.songs[vm.currentSong]
         let spacing = size.height * 0.04
         VStack {
-            if (!minimizedImage) {
-                VStack(spacing: 20) {
-                    SongHeaderAndShareView(song.title, artist: song.artist)
-                        .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
-                    
-                   SongStatus(spacing: spacing, status: $currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
-                    
-                    
+            ZStack {
+                if (!vm.minimizedImage) {
+                    VStack(spacing: 20) {
+                        SongHeaderAndShareView(song.title, artist: song.artist)
+                            .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
+                        
+                        SongStatus(spacing: spacing, status: $vm.currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
+                        
+                        
+                    }
+                    .frame(height: size.height/7)
                 }
-                .frame(height: size.height/7)
             }
+            .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
+
             
 
             //Play controls
@@ -184,7 +149,7 @@ struct ExpandedSongView: View {
 
                 HStack(alignment: .center, spacing: size.width * 0.18) {
                     ControlButton {
-                        if (currentTime < 5) {
+                        if (vm.currentTime < 5) {
                             vm.playPrev()
                         } else {
                             vm.setCurrentTime(0)
@@ -231,10 +196,10 @@ struct ExpandedSongView: View {
                 HStack(alignment: .top, spacing: size.width * 0.18) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.05)) {
-                            quoteButton.toggle()
+                            vm.quoteButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: quoteButton, toggleColor: song.averageColor)
+                        customButtonLabel(imageName: vm.quoteButton ? "quote.bubble.fill" : "quote.bubble", toggleButton: vm.quoteButton, toggleColor: song.averageColor)
                             
                     }
                     .scaleEffect(1.3)
@@ -259,10 +224,10 @@ struct ExpandedSongView: View {
                     
                     Button {
                         withAnimation(.easeInOut(duration: 0.05)) {
-                            listButton.toggle()
+                            vm.listButton.toggle()
                         }
                     } label: {
-                        customButtonLabel(imageName: "list.bullet", toggleButton: listButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: song.averageColor)
+                        customButtonLabel(imageName: "list.bullet", toggleButton: vm.listButton, paddingEdges: .vertical, paddingLength: 1, toggleColor: song.averageColor)
                             .scaleEffect(1.3)
                     }
                 }
@@ -280,15 +245,16 @@ struct ExpandedSongView: View {
         HStack(alignment: .center, spacing: 15) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(minimizedImage ? .subheadline : .title3 )
+                    .font(vm.minimizedImage ? .subheadline : .title3 )
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                 Text(artist)
-                    .font(minimizedImage ? .footnote : .body)
+                    .font(vm.minimizedImage ? .footnote : .body)
                     .foregroundStyle(.ultraThickMaterial)
                     .opacity(0.65)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
             
             Menu {
                 ForEach(vm.dropDownMenuItems.indices.sorted(), id: \.self) { index in
@@ -322,8 +288,9 @@ struct ExpandedSongView: View {
 //        let spacing = size.height * 0.04
 
         var imageFrame: CGSize {
-            minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
+            vm.minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
         }
+        
         VStack {
             HStack(spacing: 15) {
                 ZStack {
@@ -331,34 +298,37 @@ struct ExpandedSongView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: animateContent ? (minimizedImage ? 5 : 10) : 5, style: .continuous))
-                        .scaleEffect(minimizedImage ? 1 : isPlaying ? 1 : 0.75)
+                        .clipShape(RoundedRectangle(cornerRadius: animateContent ? (vm.minimizedImage ? 5 : 10) : 5, style: .continuous))
+                        .scaleEffect(vm.minimizedImage ? 1 : isPlaying ? 1 : 0.75)
                         .shadow(
                             color: Color.black
-                                .opacity(minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),
+                                .opacity(vm.minimizedImage ? 0 : isPlaying ? 0.65 : 0.3),
                             radius: 20,
-                            y: minimizedImage ? 0 : isPlaying ? 10 : 5)
+                            y: vm.minimizedImage ? 0 : isPlaying ? 10 : 5)
                         .animation(.interactiveSpring(response: 0.5, dampingFraction: 0.6), value: isPlaying)
                         .matchedGeometryEffect(id: "ICON1", in: animation)
-                        .padding(.vertical, minimizedImage ? 0 : size.height > 700 ? 30 : 10)
+                        .padding(.vertical, vm.minimizedImage ? 0 : size.height > 700 ? 30 : 10)
                 }
                 .frame(width: imageFrame.width, height: imageFrame.height)
+//                .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
                 
-                if minimizedImage {
+                if vm.minimizedImage {
                     SongHeaderAndShareView(song.title, artist: song.artist)
                         .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                 }
+                
             }
+            .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
             .padding(.horizontal, 25)
 
             
-            if listButton {
+            if vm.listButton {
                 SongsList(vm: vm)
                     .frame(height: size.height/2)
             }
             
-            if quoteButton {
-                LyricsView(lyrics: song.lyrics, scrollUp: $scrollUpLyrics)
+            if vm.quoteButton {
+                LyricsView(lyrics: song.lyrics)
                     .frame(height: size.height/2)
             }
             

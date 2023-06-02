@@ -10,17 +10,60 @@ import AVFoundation
 import MediaPlayer
 
 class HomeViewModel: ObservableObject {
+    @Published var isLoaded = false
+    
+//    Content
     @Published var songs: [Song] = [Song(name: "")]
     @Published var nextSongs: [Song] = []
     @Published var prevSongs: [Song] = []
-    @Published var isLoaded = false
+    
+    private let audioPlayer: AudioPlayer
+
+//    Current song in Player
     @Published var currentSong = 0 {
         didSet {
             getNextPrevFromSongs()
         }
     }
+    
+    @Published var currentTime: TimeInterval = 0
     @Published var volume: Float = 0
     
+//    MARK: UI
+    @Published var minimizedImage: Bool = false
+//    States for bottom buttons
+    @Published var quoteButton: Bool = false {
+        didSet {
+            if quoteButton && listButton {
+                listButton = false
+            }
+            
+            if !quoteButton && !listButton {
+                minimizedImage = false
+            }
+            
+            if quoteButton && !listButton {
+                minimizedImage = true
+            }
+        }
+    }
+    @Published var listButton: Bool = false {
+        didSet {
+            if quoteButton && listButton {
+                quoteButton = false
+            }
+            
+            if !quoteButton && !listButton {
+                minimizedImage = false
+            }
+            
+            if !quoteButton && listButton {
+                minimizedImage = true
+            }
+        }
+    }
+    
+//    SongList modes
     @Published var shuffleSongs = false
     @Published var repeatSongs = false
     @Published var infinitySongs = false
@@ -41,7 +84,6 @@ class HomeViewModel: ObservableObject {
     ]
     
     
-    let audioPlayer: AudioPlayer
     
     init(audioPlayer: AudioPlayer) {
         self.audioPlayer = audioPlayer
@@ -78,12 +120,12 @@ class HomeViewModel: ObservableObject {
                 self.prepareToPlay(self.getCurrentSong())
             } else
 //          when a song is last in queue and infinity mode is turned on
-            if self.lastSong() && self.infinitySongs {
+            if self.lastSong() && self.repeatSongs {
                 self.currentSong = 0
                 self.prepareToPlay(self.getCurrentSong())
             } else
 //          last song and no infinity mode
-            if self.lastSong() && !self.infinitySongs {
+            if self.lastSong() && !self.repeatSongs {
                 print(self.isFinished())
                 if self.isFinished() {
                     self.play()
