@@ -70,7 +70,6 @@ struct ExpandedSongView: View {
                 }
                 .padding(.top, safeArea.top + (safeArea.bottom == 0 ? 10 : 0))
                 .padding(.bottom, safeArea.bottom == 0 ? 10 : safeArea.bottom)
-//                .padding(.horizontal, 25)
                 .clipped()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
@@ -86,6 +85,7 @@ struct ExpandedSongView: View {
                     .onEnded({value in
                         if offsetY > size.height * 0.4 {
                             withAnimation(.easeInOut(duration: 0.3)) {
+                                offsetY = size.height
                                 expandScheet = false
                                 animateContent = false
                             }
@@ -310,7 +310,6 @@ struct ExpandedSongView: View {
                         .padding(.vertical, vm.minimizedImage ? 0 : size.height > 700 ? 30 : 10)
                 }
                 .frame(width: imageFrame.width, height: imageFrame.height)
-//                .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
                 
                 if vm.minimizedImage {
                     SongHeaderAndShareView(song.title, artist: song.artist)
@@ -323,12 +322,12 @@ struct ExpandedSongView: View {
 
             
             if vm.listButton {
-                SongsList(vm: vm)
+                SongsList(expandScheet: expandScheet, vm: vm)
                     .frame(height: size.height/2)
             }
             
             if vm.quoteButton {
-                LyricsView(lyrics: song.lyrics)
+                LyricsView(expandScheet: expandScheet, lyrics: song.lyrics)
                     .frame(height: size.height/2)
                     .padding(.horizontal, 25)
             }

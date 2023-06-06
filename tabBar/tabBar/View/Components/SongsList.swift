@@ -8,94 +8,68 @@
 import SwiftUI
 
 struct SongsList: View {
+    @State var expandScheet: Bool
     @ObservedObject var vm: HomeViewModel
     @State private var pressedRowID = UUID()
+    @State private var animateContent = false
     
     var body: some View {
-        ZStack(alignment: .top) {
-            sectionQueue()
-                .padding(.horizontal, 25)
-            if !vm.nextSongs.isEmpty {
-            List {
-                ForEach(vm.nextSongs) { song in
-                    SongRow(song: song)
-                        .frame(maxWidth: .infinity)
-                        .listRowInsets(EdgeInsets())
-                        .padding(.horizontal, 25)
-                        .background(.clear)
-                        .onTapGesture {
-                            vm.playSong(song: song)
+        GeometryReader {
+            let size = $0.size
+            ZStack(alignment: .top) {
+                sectionQueue()
+                    .padding(.horizontal, 25)
+                if !vm.nextSongs.isEmpty {
+                    List {
+                        ForEach(vm.nextSongs) { song in
+                            SongRow(song: song)
+                                .frame(maxWidth: .infinity)
+                                .listRowInsets(EdgeInsets())
+                                .padding(.horizontal, 25)
+                                .background(.clear)
+                                .onTapGesture {
+                                    vm.playSong(song: song)
+                                }
+                                .onLongPressGesture(minimumDuration: 1) {
+                                    self.pressedRowID = song.id
+                                    print("Long")
+                                }
+                            
                         }
-                        .onLongPressGesture(minimumDuration: 1) {
-                            self.pressedRowID = song.id
-                            print("Long")
-                        }
-
+                        .onMove(perform: moveRow)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                    }
+                    .padding(.top, 60)
+                    .padding(.horizontal, 5)
+                    .listStyle(PlainListStyle())
+                    .environment(\.editMode, .constant(.active))
+                    .scrollContentBackground(.hidden)
+                    .foregroundColor(.clear)
+                    .onAppear {
+                        UIScrollView.appearance().bounces = false
+                    }
+                    .onDisappear {
+                        UIScrollView.appearance().bounces = true
+                    }
+                } else {
+                    Rectangle()
+                        .fill(.clear)
                 }
-                .onMove(perform: moveRow)
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
             }
-            .padding(.top, 60)
-            .padding(.horizontal, 5)
-            .listStyle(PlainListStyle())
-            .environment(\.editMode, .constant(.active))
-//            .scrollIndicators(.hidden)
-            .scrollContentBackground(.hidden)
-            .foregroundColor(.clear)
-            .onAppear {
-                UIScrollView.appearance().bounces = false
-            }
-            .onDisappear {
-                UIScrollView.appearance().bounces = true
-            }
-        } else {
-                Rectangle()
-                    .fill(.clear)
-            }
-    }
-//        in order to not trigger the ExpandedView gesture for folding
+            //        in order to not trigger the ExpandedView gesture for folding
             .gesture(DragGesture(coordinateSpace: .global))
+            .opacity(animateContent && expandScheet ? 1 : 0)
+            .offset(y: animateContent && expandScheet ? 0 : size.height)
+            .animation(.easeInOut(duration: 0.1), value: expandScheet)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    animateContent = true
+                }
+            }
+        }
     }
-    
-//    var body: some View {
-//        ScrollView(showsIndicators: false) {
-//            LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
-//                Section {
-//                    ForEach(songs) { song in
-//                        SongRow(song: song)
-//                            .frame(maxWidth: .infinity)
-//                            .background(.clear)
-//                    }
-//                } header: {
-//                    sectionHistory()
-//                }
-//
-//                Section {
-//                    SongRow(song: currentSong)
-//                }
-//
-//                Section {
-//                    ForEach(songs) { song in
-//                        SongRow(song: song)
-//                            .frame(maxWidth: .infinity)
-//                            .background(.clear)
-//                    }
-//                } header: {
-//                    sectionQueue()
-//                }
-//            }
-//            .padding(.horizontal, 5)
-//            .environment(\.editMode, .constant(.active))
-//            .scrollIndicators(.hidden)
-//            .onAppear {
-//                UIScrollView.appearance().bounces = false
-//            }
-//            .onDisappear {
-//                UIScrollView.appearance().bounces = true
-//            }
-//        }
-//    }
+
     
     @ViewBuilder
     func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0, toggleColor: Color) -> some View {
@@ -221,7 +195,7 @@ struct SongsList_Previews: PreviewProvider {
                         .fill(LinearGradient(colors: [.green, .blue, .gray], startPoint: .top, endPoint: .bottomTrailing))
                 }
                 .overlay(alignment: .top) {
-                    SongsList(vm: HomeViewModel(audioPlayer: AudioPlayer.getInstance()))
+                    SongsList(expandScheet: true, vm: HomeViewModel(audioPlayer: AudioPlayer.getInstance()))
                     .frame(height: 400)
                     .border(.black)
 //                    .mask(

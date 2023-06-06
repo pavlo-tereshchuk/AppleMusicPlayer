@@ -8,25 +8,41 @@
 import SwiftUI
 
 struct LyricsView: View {
+    @State var expandScheet: Bool
     var lyrics: String?
-//    @Binding var scrollUp: Bool
+    
+    @State private var animateContent = false
+
     
     var body: some View {
-        if let lyrics = lyrics {
-            ScrollView {
-                Text(lyrics)
-                    .font(.title3)
-                    .foregroundStyle(.ultraThickMaterial)
-                    .opacity(0.65)
+        GeometryReader {
+            let size = $0.size
+            Group {
+                if let lyrics = lyrics {
+                    ScrollView {
+                        Text(lyrics)
+                            .font(.title3)
+                            .foregroundStyle(.ultraThickMaterial)
+                            .opacity(0.65)
+                    }
+                    .scrollIndicators(.hidden)
+                    //        in order to not trigger the ExpandedView gesture for folding
+                    .gesture(DragGesture(coordinateSpace: .global))
+                    
+                } else {
+                    Text("no lyrics available")
+                        .foregroundStyle(.ultraThickMaterial)
+                        .opacity(0.65)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
-            .scrollIndicators(.hidden)
-//        in order to not trigger the ExpandedView gesture for folding
-            .gesture(DragGesture(coordinateSpace: .global))
-
-        } else {
-            Text("no lyrics available")
-                .foregroundStyle(.ultraThickMaterial)
-                .opacity(0.65)
+            .opacity(animateContent && expandScheet ? 1 : 0)
+            .offset(y: animateContent && expandScheet ? 0 : size.height)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    animateContent = true
+                }
+            }
         }
     }
 }
@@ -34,7 +50,7 @@ struct LyricsView: View {
 struct LyricsView_Previews: PreviewProvider {
 //    @State static var scrollUp = false
     static var previews: some View {
-        LyricsView(lyrics: Song(name: "02 Champion").lyrics)
+        LyricsView(expandScheet: true, lyrics: Song(name: "02 Champion").lyrics)
             .preferredColorScheme(.dark)
     }
 }
