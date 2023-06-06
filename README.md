@@ -1,6 +1,6 @@
 # AppleMusicPlayer
 # 💫 About Me:
-🔭 I’m currently working on EDAG GmbH<br>🌱 I’m currently mastering SwiftUI<br>💬 Based in Berlin<br>
+🔭 Currently working on EDAG GmbH<br>🌱 mastering SwiftUI<br>💬 Based in Berlin<br>
 
 
 # 💻 Tech Stack:
