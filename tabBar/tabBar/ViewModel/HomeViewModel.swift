@@ -69,14 +69,14 @@ class HomeViewModel: ObservableObject {
     @Published var infinitySongs = false
     
     //    Drop down menu buttons
-    let dropDownMenuItems = [
+    let dropDownMenuItems: KeyValuePairs<String, String> = [
         "Add to Library" : "plus",
         "Add to a Playlist..." : "text.badge.plus",
         "Play Next" : "text.insert",
         "Play Last" : "text.append",
         "Share Song..." : "square.and.arrow.up",
-        "View Full Lyrics" : "text.quote",
-        "Share Lyrics" : "",
+        "View Full Lyrics" : "quote.bubble",
+        "Share Lyrics" : "arrow.up.square",
         "Show Album" : "music.note.list",
         "Create Station" : "badge.plus.radiowaves.right",
         "Love" : "heart",

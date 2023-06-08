@@ -12,15 +12,11 @@ import MediaPlayer
 struct ExpandedSongView: View {
     @Binding var expandScheet: Bool
     @Binding var isPlaying: Bool
-    @Binding var isFinished: Bool
     @ObservedObject var vm: HomeViewModel
     var animation: Namespace.ID
     @State private var animateContent: Bool = false
     
     @State private var offsetY: CGFloat = 0
-    
-    @State private var hiddenSystemVolumeSlider: UISlider!
-
     
     let timer = Timer.publish(every: 0.25, on: .main, in: .common)
         .autoconnect()
@@ -103,15 +99,15 @@ struct ExpandedSongView: View {
             }
         }
         .onReceive(timer) { _ in
-            self.isFinished = vm.isFinished()
             self.isPlaying = self.vm.isPlaying()
-            
-            if !isFinished {
-                vm.currentTime = vm.getCurrentTime() ?? vm.currentTime
+//            Song status
+            if vm.isFinished() {
+                vm.playNext()
             } else {
-                self.vm.playNext()
+                vm.currentTime = vm.getCurrentTime() ?? vm.currentTime
             }
             
+//            Volume
             let vol = vm.getVolume()
 //            for better UX because sound changes new via levels 0.05 each
             if abs(vm.volume - vol) >= 0.05 {
@@ -131,7 +127,9 @@ struct ExpandedSongView: View {
                         SongHeaderAndShareView(song.title, artist: song.artist)
                             .matchedGeometryEffect(id: "SongHeaderAndShareView", in: animation)
                         
-                        SongStatus(spacing: spacing, status: $vm.currentTime.onChange({vm.setCurrentTime($0)}), duration: song.duration)
+                        SongStatus(spacing: spacing,
+                                   status: $vm.currentTime.onChange({vm.setCurrentTime($0)}),
+                                   duration: song.duration)
                         
                         
                     }
@@ -257,7 +255,7 @@ struct ExpandedSongView: View {
             .animation(.easeInOut(duration: 0.3), value: vm.minimizedImage)
             
             Menu {
-                ForEach(vm.dropDownMenuItems.indices.sorted(), id: \.self) { index in
+                ForEach(vm.dropDownMenuItems.indices.sorted(by: >), id: \.self) { index in
                     Button {
 
                     } label: {
@@ -285,8 +283,6 @@ struct ExpandedSongView: View {
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
         let song = vm.songs[vm.currentSong]
-//        let spacing = size.height * 0.04
-
         var imageFrame: CGSize {
             vm.minimizedImage ? CGSize(width: 60, height: 60) : CGSize(width: size.width - 50, height: size.width - 50)
         }
