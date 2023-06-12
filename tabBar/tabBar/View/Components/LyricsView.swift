@@ -26,7 +26,7 @@ struct LyricsView: View {
                             .opacity(0.65)
                     }
                     .scrollIndicators(.hidden)
-                    //        in order to not trigger the ExpandedView gesture for folding
+//        in order not to trigger the ExpandedView gesture for folding
                     .gesture(DragGesture(coordinateSpace: .global))
                     
                 } else {
@@ -41,6 +41,11 @@ struct LyricsView: View {
             .onAppear {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     animateContent = true
+                }
+            }
+            .onDisappear {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    animateContent = false
                 }
             }
         }

@@ -61,7 +61,7 @@ extension MPVolumeView {
 }
 
 extension UIImage {
-    /// Average color of the image, nil if it cannot be found
+    // Average color of the image, nil if it cannot be found
     var averageColor: UIColor? {
         // convert our image to a Core Image Image
         guard let inputImage = CIImage(image: self) else { return nil }
@@ -72,7 +72,7 @@ extension UIImage {
                                     z: inputImage.extent.size.width,
                                     w: inputImage.extent.size.height)
 
-        // create a CIAreaAverage filter, this will allow us to pull the average color from the image later on
+        // create a CIAreaAverage filter to pull the average color from the image later on
         guard let filter = CIFilter(name: "CIAreaAverage",
                                   parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return nil }
         guard let outputImage = filter.outputImage else { return nil }
