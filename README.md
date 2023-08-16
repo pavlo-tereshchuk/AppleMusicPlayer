@@ -48,4 +48,4 @@ Play or pause your songs with a delightful animation.
    ```bash
    git clone https://github.com/pavlo-tereshchuk/AppleMusicPlayer.git
    ```
-2. Insert disered songs in Songs folder (ideally with inbuilt poster and lyrics)
+2. Insert desired songs in Songs folder (ideally with inbuilt poster and lyrics)
