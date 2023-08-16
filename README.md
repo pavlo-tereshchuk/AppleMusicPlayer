@@ -47,4 +47,5 @@ Play or pause your songs with a delightful animation.
 1. Clone the repository:
    ```bash
    git clone https://github.com/pavlo-tereshchuk/AppleMusicPlayer.git
+   ```
 2. Insert disered songs in Songs folder (ideally with inbuilt poster and lyrics)
