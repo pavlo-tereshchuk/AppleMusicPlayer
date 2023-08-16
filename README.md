@@ -2,7 +2,7 @@
 
 A SwiftUI-only implementation of Apple Music's pop-up UI. This project is a study in accurately replicating the original app's animations and functionalities using SwiftUI.
 
-![Simulator Screenshot - iPhone 14 Pro - 2023-08-16 at 10 43 06 width="200" height="200" /](https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/2b1c284e-1bdc-4a41-ab76-762c0760ea86)
+![Simulator Screenshot - iPhone 14 Pro - 2023-08-16 at 10 43 06](https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/2b1c284e-1bdc-4a41-ab76-762c0760ea86  = 250x250)
 
 ## Features
 
