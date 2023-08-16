@@ -8,7 +8,6 @@ A SwiftUI-only implementation of Apple Music's pop-up UI. This project is a stud
 
 ### Pop-out/Pop-in Animations
 Simulate the Apple Music pop-out and pop-in animations.
-- **Pop-in**: Pull down to pop the screen back in. The content dynamically compresses as you pull.
   
 <img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/0c92bb42-c3fd-4981-a36c-0e86d158166c" alt="1" width="300" />
 
