@@ -12,11 +12,11 @@ Simulate the Apple Music pop-out and pop-in animations.
 <img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/0c92bb42-c3fd-4981-a36c-0e86d158166c" alt="1" width="300" />
 
 <img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/4b495645-f866-430f-a037-6f0789104380" alt="2" width="300" />
-<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/b4137009-0a4e-49ad-ad7f-f24342cb96ca" alt="3" width="300" />
-<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/33577c49-14b5-43bc-8fa7-7953e65d6a18" alt="4" width="300" />
-
-<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/8570861f-e447-4d1b-b438-85bdac50f8c6" alt="6" width="300" />
-<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/01519483-f7b3-488f-b602-6e0e0530dde0" alt="last" width="300" />
+<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/ee8571b9-be24-4ee9-b1be-7d1527312f52" alt="3" width="300" />
+<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/e29bda1e-881b-455e-b0f3-0a7e5ab61c97" alt="4" width="300" />
+<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/9e3808d6-7cfc-4587-9786-163c7d510c15" alt="5" width="300" />
+<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/ffb7c690-34b3-460c-89ad-e938466ff934" alt="6" width="300" />
+<img src= "https://github.com/pavlo-tereshchuk/AppleMusicPlayer/assets/16036695/280105fa-3f47-4e63-90f8-b7f2d83e4d0f" alt="last" width="300" />
 
 ### Rewind
 Replicates Apple Music's rewind animation perfectly.
