@@ -9,19 +9,46 @@ import SwiftUI
 import MediaPlayer
 
 
+/// The full-screen now-playing view.
+///
+/// Presented as an overlay from ``HomeView`` and dismissed by dragging down.
+/// The artwork and background arrive via `matchedGeometryEffect` from the mini
+/// player, while `animateContent` slides the controls up a beat later to
+/// reproduce Apple Music's staggered entrance.
+///
+/// Since `AVAudioPlayer` reports no progress, this view also acts as the
+/// player's clock: a timer polls playback position, play/pause state and
+/// system volume, pushing each into ``HomeViewModel``, and advances the queue
+/// when a track ends.
 struct ExpandedSongView: View {
+
+    // MARK: - Public properties
+
+    /// Set to `false` when the sheet is dragged far enough to dismiss.
     @Binding var expandScheet: Bool
+
     @Binding var isPlaying: Bool
     @ObservedObject var vm: HomeViewModel
+
+    /// The geometry namespace shared with ``HomeView``.
     var animation: Namespace.ID
-    @State private var animateContent: Bool = false
-    
-    @State private var offsetY: CGFloat = 0
-    
+
+    /// Polls the audio player, which has no progress callbacks of its own.
     let timer = Timer.publish(every: 0.25, on: .main, in: .common)
         .autoconnect()
 
-    
+    // MARK: - Private properties
+
+    /// Drives the entrance animation: the controls and corner radius are tied
+    /// to this rather than to `expandScheet`, which lets them lag behind the
+    /// matched-geometry transition.
+    @State private var animateContent: Bool = false
+
+    /// The sheet's drag offset, in points.
+    @State private var offsetY: CGFloat = 0
+
+    // MARK: - Body
+
     var body: some View {
         GeometryReader {
             let size = $0.size
@@ -116,6 +143,16 @@ struct ExpandedSongView: View {
         }
     }
     
+    // MARK: - Public methods
+
+    /// The lower half of the sheet: title, scrubber, transport controls,
+    /// volume and the lyrics/queue toggles.
+    ///
+    /// The title and scrubber are hidden while a panel is open, since they move
+    /// up next to the minimized artwork.
+    ///
+    /// - Parameter size: The size of the enclosing sheet, used to scale
+    ///   spacing and control sizes to the device.
     @ViewBuilder
     func PlayerView(_ size: CGSize) -> some View{
         let song = vm.songs[vm.currentSong]
@@ -238,6 +275,15 @@ struct ExpandedSongView: View {
         .offset(y: animateContent ? 0 : size.height)
     }
     
+    /// The track title and artist, with the context menu button alongside.
+    ///
+    /// This moves between two places depending on ``HomeViewModel/minimizedImage``
+    /// — below the full-size artwork, or to its right once it shrinks — and is
+    /// matched across both positions so the text slides rather than jumps.
+    ///
+    /// - Parameters:
+    ///   - title: The track title.
+    ///   - artist: The performing artist.
     @ViewBuilder
     func SongHeaderAndShareView(_ title: String, artist: String) -> some View {
         HStack(alignment: .center, spacing: 15) {
@@ -280,6 +326,14 @@ struct ExpandedSongView: View {
         }
     }
     
+    /// The upper half of the sheet: the artwork, and the lyrics or queue panel
+    /// when one is open.
+    ///
+    /// The artwork fills the width while nothing else is showing and collapses
+    /// to a 60-point thumbnail to make room for a panel. It also breathes with
+    /// playback, scaling down and dropping its shadow when paused.
+    ///
+    /// - Parameter size: The size of the enclosing sheet.
     @ViewBuilder
     func SongImageAndHeaderShareView(_ size: CGSize) -> some View {
         let song = vm.songs[vm.currentSong]
@@ -332,6 +386,16 @@ struct ExpandedSongView: View {
 
     }
     
+    /// A toggle button label that grows a tinted rounded background when on.
+    ///
+    /// - Parameters:
+    ///   - imageName: The SF Symbol name for the icon.
+    ///   - toggleButton: Whether the button is currently on.
+    ///   - paddingEdges: The edges to apply `paddingLength` to.
+    ///   - paddingLength: Extra inset used to even out differently
+    ///     proportioned symbols.
+    ///   - toggleColor: The icon tint when on, normally the artwork's
+    ///     dominant color.
     @ViewBuilder
     func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0, toggleColor: Color) -> some View {
         Image(systemName: imageName)
@@ -360,18 +424,36 @@ struct ExpandedView_Previews: PreviewProvider {
     }
 }
 
+/// A transport button that flashes a circular highlight when tapped.
+///
+/// The highlight is driven by a timed state change rather than the button's
+/// pressed state, so it blooms and fades on its own even for a quick tap —
+/// which is what makes Apple Music's skip buttons feel responsive.
 struct ControlButton< Content: View>: View {
+
+    // MARK: - Public properties
+
     let completion: () -> Void
     @ViewBuilder let content: Content
-    
-    
+
+    // MARK: - Private properties
+
     @State private var showBackground = false
-    
+
+    // MARK: - Init
+
+    /// Creates a transport button.
+    ///
+    /// - Parameters:
+    ///   - completion: The action to run when the button is tapped.
+    ///   - content: The button's icon.
     init(_ completion: @escaping () -> Void, content: @escaping () -> Content) {
         self.completion = completion
         self.content = content()
     }
-    
+
+    // MARK: - Body
+
     var body: some View {
         Button {
             completion()
@@ -393,10 +475,22 @@ struct ControlButton< Content: View>: View {
     }
 }
 
+/// Text with a colored highlight that sweeps across it on a loop.
+///
+/// - Note: An experiment toward karaoke-style lyric highlighting; not used by
+///   the player yet.
 struct RunningLine: View {
+
+    // MARK: - Public properties
+
     let text: String
+
+    // MARK: - Private properties
+
     @State private var xOffset: CGFloat = 0
-    
+
+    // MARK: - Body
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {

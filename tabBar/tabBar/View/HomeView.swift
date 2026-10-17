@@ -7,13 +7,32 @@
 
 import SwiftUI
 
+/// The app's main screen: a tab bar with the mini player pinned above it.
+///
+/// Tapping the mini player presents ``ExpandedSongView`` as an overlay. Both
+/// views draw from a shared `Namespace`, so the artwork and background
+/// animate between the two with `matchedGeometryEffect` instead of being
+/// cross-faded.
 struct HomeView: View {
+
+    // MARK: - Public properties
+
     @ObservedObject var vm: HomeViewModel
-    @State private var expandScheet = false
+
+    /// A view-local mirror of the player's play/pause state, kept in sync by
+    /// the expanded player's timer so both players animate together.
     @State var isPlaying: Bool = false
+
+    // MARK: - Private properties
+
+    /// Whether the full-screen now-playing view is presented.
+    @State private var expandScheet = false
+
+    /// The geometry namespace shared with ``ExpandedSongView``.
     @Namespace private var animation
-    
-    
+
+    // MARK: - Body
+
     var body: some View {
         TabView {
             TabItem("Home", "play.circle.fill")
@@ -34,6 +53,13 @@ struct HomeView: View {
         }
     }
     
+    // MARK: - Public methods
+
+    /// The mini player bar that sits above the tab bar.
+    ///
+    /// While the expanded view is up, the bar's material is replaced with a
+    /// clear rectangle so the shared background can animate upward without
+    /// leaving a duplicate behind.
     @ViewBuilder
     func CustomPlayerView() -> some View {
         ZStack {
@@ -61,6 +87,14 @@ struct HomeView: View {
          .offset(y: -49)
     }
     
+    /// A placeholder tab holding nothing but its own title.
+    ///
+    /// The tabs exist to reproduce Apple Music's chrome; only the player is
+    /// implemented.
+    ///
+    /// - Parameters:
+    ///   - title: The tab's label, also shown as its content.
+    ///   - icon: The SF Symbol name for the tab's icon.
     @ViewBuilder
     func TabItem(_ title: String, _ icon: String) -> some View {
         ScrollView(.vertical, showsIndicators: false){
@@ -77,13 +111,26 @@ struct HomeView: View {
     }
 }
 
+/// The compact now-playing row: artwork, title, play/pause and skip.
+///
+/// The same view is rendered twice — once inside the mini player bar and once,
+/// hidden, at the top of ``ExpandedSongView`` — so the two layouts share
+/// identical geometry while the transition is in flight.
 struct MusicInfo: View {
+
+    // MARK: - Public properties
+
+    /// Set to `true` when the row is tapped, presenting the expanded player.
     @Binding var expandScheet: Bool
+
     @Binding var isPlaying: Bool
     @ObservedObject var vm: HomeViewModel
+
+    /// The geometry namespace shared with ``ExpandedSongView``.
     var animation: Namespace.ID
-    
-    
+
+    // MARK: - Body
+
     var body: some View {
         let song = vm.songs[vm.currentSong]
 

@@ -7,9 +7,16 @@
 
 import SwiftUI
 
+/// A queue row showing a song's artwork, title and artist.
 struct SongRow: View {
+
+    // MARK: - Public properties
+
+    /// The song to display.
     var song: Song
-    
+
+    // MARK: - Body
+
     var body: some View {
         HStack(alignment: .center) {
             Image(uiImage: song.image!)

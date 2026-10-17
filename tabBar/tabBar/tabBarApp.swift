@@ -7,9 +7,12 @@
 
 import SwiftUI
 
+/// A SwiftUI recreation of the Apple Music player interface.
 @main
 struct tabBarApp: App {
-    
+
+    // MARK: - Body
+
     var body: some Scene {
         WindowGroup {
             ContentView()

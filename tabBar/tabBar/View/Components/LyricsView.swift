@@ -7,13 +7,28 @@
 
 import SwiftUI
 
+/// The lyrics panel, or a placeholder when the track has no lyrics.
+///
+/// Like ``SongsList``, the panel claims its own drag gesture so scrolling the
+/// lyrics doesn't dismiss the enclosing ``ExpandedSongView``.
 struct LyricsView: View {
+
+    // MARK: - Public properties
+
+    /// Whether the enclosing player is expanded; the panel hides itself when
+    /// it isn't.
     @State var expandScheet: Bool
+
+    /// The lyrics to display, or `nil` if the track carries none.
     var lyrics: String?
-    
+
+    // MARK: - Private properties
+
+    /// Drives the panel's slide-up entrance.
     @State private var animateContent = false
 
-    
+    // MARK: - Body
+
     var body: some View {
         GeometryReader {
             let size = $0.size

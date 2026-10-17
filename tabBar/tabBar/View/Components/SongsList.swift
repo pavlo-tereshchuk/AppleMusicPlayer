@@ -7,12 +7,35 @@
 
 import SwiftUI
 
+/// The queue panel listing the songs still to play.
+///
+/// Rows are always in edit mode so they can be dragged without a prior tap,
+/// matching Apple Music. Reordering happens on ``HomeViewModel/songs``
+/// directly, with the row offsets shifted past the current song.
+///
+/// The panel claims its own drag gesture so swipes inside the list don't
+/// dismiss the enclosing ``ExpandedSongView``.
 struct SongsList: View {
+
+    // MARK: - Public properties
+
+    /// Whether the enclosing player is expanded; the panel hides itself when
+    /// it isn't.
     @State var expandScheet: Bool
+
     @ObservedObject var vm: HomeViewModel
+
+    // MARK: - Private properties
+
+    /// The row most recently long-pressed, reserved for a per-row context
+    /// menu.
     @State private var pressedRowID = UUID()
+
+    /// Drives the panel's slide-up entrance.
     @State private var animateContent = false
-    
+
+    // MARK: - Body
+
     var body: some View {
         GeometryReader {
             let size = $0.size
@@ -71,6 +94,18 @@ struct SongsList: View {
     }
 
     
+    // MARK: - Public methods
+
+    /// A toggle button label that grows a tinted rounded background when on.
+    ///
+    /// - Parameters:
+    ///   - imageName: The SF Symbol name for the icon.
+    ///   - toggleButton: Whether the button is currently on.
+    ///   - paddingEdges: The edges to apply `paddingLength` to.
+    ///   - paddingLength: Extra inset used to even out differently
+    ///     proportioned symbols.
+    ///   - toggleColor: The icon tint when on, normally the artwork's
+    ///     dominant color.
     @ViewBuilder
     func customButtonLabel(imageName: String, toggleButton: Bool, paddingEdges: Edge.Set = .all, paddingLength: CGFloat = 0, toggleColor: Color) -> some View {
         ZStack {
@@ -93,6 +128,9 @@ struct SongsList: View {
         .scaleEffect(0.8)
     }
     
+    /// A "History" header with a Clear button.
+    ///
+    /// - Note: Unused — playback history isn't surfaced in the panel yet.
     @ViewBuilder
     func sectionHistory() -> some View {
         HStack {
@@ -118,6 +156,9 @@ struct SongsList: View {
         .listRowInsets(EdgeInsets())
     }
     
+    /// The "In queue" header with the shuffle, repeat and autoplay toggles.
+    ///
+    /// The toggles tint themselves with the current artwork's dominant color.
     @ViewBuilder
     func sectionQueue() -> some View {
         let avgColor = vm.getCurrentSong().averageColor
@@ -172,6 +213,17 @@ struct SongsList: View {
         .listRowInsets(EdgeInsets())
     }
     
+    // MARK: - Private methods
+
+    /// Applies a row reorder to the underlying queue.
+    ///
+    /// The list only shows upcoming songs, so both the source and destination
+    /// offsets are shifted past the current song before being applied to
+    /// ``HomeViewModel/songs``.
+    ///
+    /// - Parameters:
+    ///   - source: The offsets being moved, relative to the visible rows.
+    ///   - destination: The target offset, relative to the visible rows.
     private func moveRow(source: IndexSet, destination: Int){
         let offset = vm.currentSong + 1
         var newSource = IndexSet()

@@ -10,19 +10,39 @@ import SwiftUI
 import MediaPlayer
 
 extension TimeInterval {
+
+    // MARK: - Public properties
+
+    /// The interval formatted as `m:ss`, as used by the player's time labels.
     var minuteSecond: String {
         String(format:"%d:%02d", minute, second)
     }
-    
+
+    /// The minutes component of the interval, wrapping each hour.
     var minute: Int {
         Int((self/60).truncatingRemainder(dividingBy: 60))
     }
+
+    /// The seconds component of the interval, wrapping each minute.
     var second: Int {
         Int(truncatingRemainder(dividingBy: 60))
     }
 }
 
 extension Binding {
+
+    // MARK: - Public methods
+
+    /// Wraps the binding so a handler runs whenever it's written to.
+    ///
+    /// This is how the scrubber and volume slider push their values through to
+    /// the audio player: the binding updates the view model as usual, and the
+    /// handler performs the side effect.
+    ///
+    /// - Parameter handler: A closure called with the new value after it's
+    ///   stored.
+    /// - Returns: A binding that forwards writes to the original and then to
+    ///   `handler`.
     func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
         Binding(
             get: { self.wrappedValue },
@@ -37,6 +57,19 @@ extension Binding {
 //Update system volume
 extension MPVolumeView {
 
+    // MARK: - Public methods
+
+    /// Sets the system output volume.
+    ///
+    /// There's no public API for this, so the value is written to the hidden
+    /// `UISlider` inside an off-screen `MPVolumeView`. The write is deferred
+    /// by a moment because the slider isn't wired up to the audio session
+    /// immediately after the view is created.
+    ///
+    /// - Parameter volume: The target level, from `0` to `1`.
+    ///
+    /// - Important: This relies on `MPVolumeView`'s private view hierarchy and
+    ///   will silently stop working if that changes.
     static func setVolume(_ volume: Float) -> Void {
         let volumeView = MPVolumeView()
         let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider
@@ -47,6 +80,10 @@ extension MPVolumeView {
     }
     
     
+    /// Reads the system output volume from the shared audio session.
+    ///
+    /// - Returns: The current level from `0` to `1`, or `0` if the session
+    ///   can't be activated.
     static func getVolume() -> Float {
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -61,7 +98,13 @@ extension MPVolumeView {
 }
 
 extension UIImage {
-    // Average color of the image, nil if it cannot be found
+
+    // MARK: - Public properties
+
+    /// The image's single average color, or `nil` if it can't be computed.
+    ///
+    /// Averaging is done by a Core Image `CIAreaAverage` filter rendered into a
+    /// 1×1 bitmap, so cost doesn't scale with the artwork's size.
     var averageColor: UIColor? {
         // convert our image to a Core Image Image
         guard let inputImage = CIImage(image: self) else { return nil }
@@ -97,6 +140,12 @@ extension UIImage {
                        alpha: CGFloat(bitmap[3]) / 255)
     }
     
+    // MARK: - Public methods
+
+    /// Splits the image into its four quadrants.
+    ///
+    /// - Returns: The top-left, top-right, bottom-left and bottom-right
+    ///   quadrants, in that order.
     func splitImage() -> [UIImage] {
         let imgWidth = self.size.width / 2
         let imgHeight = self.size.height / 2
@@ -120,12 +169,31 @@ extension UIImage {
         return imgImages
     }
     
+    /// The average color of each quadrant, used as gradient stops behind the
+    /// expanded player.
+    ///
+    /// Sampling per quadrant rather than once overall keeps some of the
+    /// artwork's spatial variation, so the background gradient resembles the
+    /// cover art instead of collapsing to a single flat tone.
     func getAverageColors() -> [Color] {
         return self.splitImage().compactMap({Color($0.averageColor ?? .gray)})
     }
 }
 
 extension View {
+
+    // MARK: - Public properties
+
+    /// The display's corner radius, inset slightly for the expanded player's
+    /// rounded card.
+    ///
+    /// Read through the screen's private `_displayCornerRadius` key so the
+    /// sheet's corners line up with the hardware on every device.
+    ///
+    /// - Returns: The adjusted radius, or `0` if the value isn't available.
+    ///
+    /// - Important: This depends on a private UIKit key and may break on
+    ///   future OS versions.
     var deviceCornerRadius: CGFloat {
         let key = "_displayCornerRadius"
         if let screen = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen {

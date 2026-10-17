@@ -7,11 +7,33 @@
 
 import SwiftUI
 
+/// A playback scrubber that thickens while the user drags it.
+///
+/// Dragging is relative rather than absolute: the bar tracks how far the
+/// gesture has moved since the last update instead of jumping to wherever the
+/// finger landed, which is what lets the user fine-tune a position from
+/// anywhere along the bar.
+///
+/// The bound position is only written back once the gesture ends, so the
+/// player isn't seeking continuously mid-drag. Until then the labels and fill
+/// preview the pending position.
 struct SongStatus: View {
+
+    // MARK: - Public properties
+
     let spacing: CGFloat
+
+    /// The playback position in seconds, updated when a drag ends.
     @Binding var status: TimeInterval
+
+    /// The track length in seconds, used to convert between position and
+    /// progress.
     let duration: TimeInterval
-    
+
+    // MARK: - Private properties
+
+    /// Whether a drag is in progress. Starting one seeds ``newStatus`` with
+    /// the current progress so the bar doesn't jump.
     @State private var isPressed: Bool = false {
         didSet {
             if isPressed && !oldValue {
@@ -19,15 +41,29 @@ struct SongStatus: View {
             }
         }
     }
+
+    /// The pending progress, from `0` to `1`, shown while dragging.
     @State private var newStatus: Double = 0
+
+    /// The previous drag translation, used to derive each incremental step.
     @State private var oldTranslation: Double = 0
-    
+
+    // MARK: - Init
+
+    /// Creates a scrubber.
+    ///
+    /// - Parameters:
+    ///   - spacing: Reserved for layout spacing.
+    ///   - status: A binding to the playback position, in seconds.
+    ///   - duration: The track length, in seconds.
     init(spacing: CGFloat, status: Binding<TimeInterval>, duration: TimeInterval) {
         self.spacing = spacing
         self._status = status
         self.duration = duration
     }
-    
+
+    // MARK: - Body
+
     var body: some View {
         GeometryReader {
             let size = $0.size
