@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/pavlo/.gem/ruby/2.6.0/gems/**)",
+      "Bash(GEM_HOME=/Users/pavlo/.gem/ruby/2.6.0 ruby -e 'require \"\"\"\"xcodeproj\"\"\"\"; puts \"\"\"\"v=\"\"\"\" + Xcodeproj::VERSION')"
+    ]
+  }
+}
