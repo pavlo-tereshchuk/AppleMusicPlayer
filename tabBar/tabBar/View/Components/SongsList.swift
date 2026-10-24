@@ -67,6 +67,7 @@ struct SongsList: View {
                     .padding(.horizontal, 5)
                     .listStyle(PlainListStyle())
                     .environment(\.editMode, .constant(.active))
+                    .environment(\.colorScheme, .dark)
                     .scrollContentBackground(.hidden)
                     .foregroundColor(.clear)
                     .onAppear {

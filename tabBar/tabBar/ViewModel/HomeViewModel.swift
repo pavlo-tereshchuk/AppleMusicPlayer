@@ -259,11 +259,11 @@ class HomeViewModel: ObservableObject {
         if let bundlePath = Bundle.main.resourcePath {
             let fileManager = FileManager.default
             let mp3Files = try? fileManager.contentsOfDirectory(atPath: bundlePath).filter {
-                $0.contains(".mp3")
+                $0.hasSuffix(".mp3")
             }
             
             if let mp3Files = mp3Files {
-                self.songs = mp3Files.compactMap({Song(name: $0.split(separator: ".").map(String.init)[0])})
+                self.songs = mp3Files.compactMap({Song(name: ($0 as NSString).deletingPathExtension)})
                 return true
             }
         } else {

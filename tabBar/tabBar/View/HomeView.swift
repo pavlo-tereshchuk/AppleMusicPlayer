@@ -35,11 +35,11 @@ struct HomeView: View {
 
     var body: some View {
         TabView {
-            TabItem("Home", "play.circle.fill")
-            TabItem("Browse", "square.grid.2x2.fill")
-            TabItem("Radio", "dot.radiowaves.left.and.right")
-            TabItem("Music", "play.square.fill")
-            TabItem("Search", "magnifyingglass")
+            TabItem("Home", "play.circle.fill") { HomeTab(vm: vm) }
+            TabItem("Browse", "square.grid.2x2.fill") { BrowseTab(vm: vm) }
+            TabItem("Radio", "dot.radiowaves.left.and.right") { RadioTab(vm: vm) }
+            TabItem("Music", "play.square.fill") { MusicTab(vm: vm) }
+            TabItem("Search", "magnifyingglass") { SearchTab(vm: vm) }
         }
         .tint(.red)
         .safeAreaInset(edge: .bottom) {
@@ -87,20 +87,19 @@ struct HomeView: View {
          .offset(y: -49)
     }
     
-    /// A placeholder tab holding nothing but its own title.
+    /// A tab carrying the chrome shared by every tab: its label, the tab bar's
+    /// material, and hiding the bar while the expanded player is up.
     ///
-    /// The tabs exist to reproduce Apple Music's chrome; only the player is
-    /// implemented.
+    /// Only the player is implemented; the tabs themselves show the mock
+    /// content in `MockTabs.swift`.
     ///
     /// - Parameters:
-    ///   - title: The tab's label, also shown as its content.
+    ///   - title: The tab's label.
     ///   - icon: The SF Symbol name for the tab's icon.
+    ///   - content: The tab's screen.
     @ViewBuilder
-    func TabItem(_ title: String, _ icon: String) -> some View {
-        ScrollView(.vertical, showsIndicators: false){
-            Text(title)
-                .padding(.top, 200)
-        }
+    func TabItem<Content: View>(_ title: String, _ icon: String, @ViewBuilder content: () -> Content) -> some View {
+        content()
         .tabItem {
                 Image(systemName: icon)
                 Text(title)

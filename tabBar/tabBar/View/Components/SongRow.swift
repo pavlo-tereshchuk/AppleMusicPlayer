@@ -29,12 +29,11 @@ struct SongRow: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(song.title)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                 Text(song.artist)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.ultraThickMaterial)
-                    .opacity(0.65)
+                    .foregroundColor(.secondary)
             }
             .lineLimit(1)
             .padding(5)

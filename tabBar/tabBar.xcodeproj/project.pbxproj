@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		15C108EFA8F49898DDF5F041 /* TimeIntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5839201663BB219D1901C0 /* TimeIntervalTests.swift */; };
+		39E6DCB4A74228A06C3AA747 /* SongLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F1FFDF0095D94033E2E3F04 /* SongLibraryTests.swift */; };
+		3E98D270308D5221000D754A /* Fontaines D.C. – Intimate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E98D26F308D5221000D754A /* Fontaines D.C. – Intimate.mp3 */; };
 		4BBACB8B2B80A7316FA56E21 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA55CB3B8526F8EA6CE8289C /* Foundation.framework */; };
+		826A44A5CC755914BA73734B /* MockTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42737DAF8571C22EB5CD94A2 /* MockTabs.swift */; };
 		C516A14129D6E484007CD723 /* ExpandedSongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C516A14029D6E484007CD723 /* ExpandedSongView.swift */; };
 		C56CEA6F29D3366200205820 /* tabBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56CEA6E29D3366200205820 /* tabBarApp.swift */; };
 		C56CEA7129D3366200205820 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56CEA7029D3366200205820 /* ContentView.swift */; };
@@ -42,6 +45,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F1FFDF0095D94033E2E3F04 /* SongLibraryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SongLibraryTests.swift; sourceTree = "<group>"; };
+		3E98D26F308D5221000D754A /* Fontaines D.C. – Intimate.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Fontaines D.C. – Intimate.mp3"; sourceTree = "<group>"; };
+		42737DAF8571C22EB5CD94A2 /* MockTabs.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockTabs.swift; sourceTree = "<group>"; };
 		4D5839201663BB219D1901C0 /* TimeIntervalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TimeIntervalTests.swift; sourceTree = "<group>"; };
 		C516A14029D6E484007CD723 /* ExpandedSongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedSongView.swift; sourceTree = "<group>"; };
 		C56CEA6B29D3366200205820 /* tabBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,8 +114,8 @@
 			isa = PBXGroup;
 			children = (
 				4D5839201663BB219D1901C0 /* TimeIntervalTests.swift */,
+				0F1FFDF0095D94033E2E3F04 /* SongLibraryTests.swift */,
 			);
-			name = tabBarTests;
 			path = tabBarTests;
 			sourceTree = "<group>";
 		};
@@ -163,6 +169,7 @@
 				C56CEA7D29D33FD900205820 /* HomeView.swift */,
 				C516A14029D6E484007CD723 /* ExpandedSongView.swift */,
 				C5E1FD5429EDA8FF00F0AF09 /* Components */,
+				42737DAF8571C22EB5CD94A2 /* MockTabs.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -187,6 +194,7 @@
 		C5E1FD5129E84C3600F0AF09 /* Songs */ = {
 			isa = PBXGroup;
 			children = (
+				3E98D26F308D5221000D754A /* Fontaines D.C. – Intimate.mp3 */,
 				C5CE1E562A0E698300ABEF9A /* 02 Champion.mp3 */,
 				C5E1FD4C29E6EC7200F0AF09 /* Juice Jones.mp3 */,
 				C5E1FD6029F28AD000F0AF09 /* Daft_Punk_GLBTM.mp3 */,
@@ -303,6 +311,7 @@
 				C5E1FD6129F28AD000F0AF09 /* Daft_Punk_GLBTM.mp3 in Resources */,
 				C56CEA7629D3366900205820 /* Preview Assets.xcassets in Resources */,
 				C56CEA7329D3366900205820 /* Assets.xcassets in Resources */,
+				3E98D270308D5221000D754A /* Fontaines D.C. – Intimate.mp3 in Resources */,
 				C5CE1E572A0E698400ABEF9A /* 02 Champion.mp3 in Resources */,
 				C5CE1E552A0E48F400ABEF9A /* SZA - Kill Bill.mp3 in Resources */,
 				C5E1FD6529F6C41A00F0AF09 /* Mermaids.mp3 in Resources */,
@@ -318,6 +327,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15C108EFA8F49898DDF5F041 /* TimeIntervalTests.swift in Sources */,
+				39E6DCB4A74228A06C3AA747 /* SongLibraryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +348,7 @@
 				C5E1FD4B29E08B8100F0AF09 /* AudioPlayer.swift in Sources */,
 				C56CEA7E29D33FD900205820 /* HomeView.swift in Sources */,
 				C56CEA6F29D3366200205820 /* tabBarApp.swift in Sources */,
+				826A44A5CC755914BA73734B /* MockTabs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
